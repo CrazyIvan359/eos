@@ -28,4 +28,4 @@ from community.eos.update import update_eos
 
 __all__ = [ "update_eos" ]
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"

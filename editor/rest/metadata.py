@@ -26,7 +26,7 @@ REST Based Metadata Editor - Metadata
 
 import json
 from ast import literal_eval
-from rest_utils import rest_get, rest_put, rest_delete
+from rest.utils import rest_get, rest_put, rest_delete
 
 
 def get_metadata(item_name, namespace, host):

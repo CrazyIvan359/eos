@@ -36,10 +36,10 @@ import click
 from click import echo, clear
 
 from constants import *
-import rest_eos_menu as menu
-import rest_eos_util as util
-from rest_utils import validate_hostname, validate_item, update_item
-from rest_metadata import get_value
+import menu
+import utils
+from rest.utils import validate_hostname, validate_item, update_item
+from rest.metadata import get_value
 
 master_group_name = ""
 reinit_item_name = ""
@@ -49,17 +49,17 @@ def load_config(openhab_host):
     """Load Eos settings from ``{$OH_CONF}/automation/lib/python/configuration.py``
     """
     global master_group_name
-    master_group_name = util.get_conf_value(CONF_KEY_MASTER_GROUP, str)
+    master_group_name = utils.get_conf_value(CONF_KEY_MASTER_GROUP, str)
     if not master_group_name:
         echo("ERROR: No '{name}' specified in configuration".format(name=CONF_KEY_MASTER_GROUP), err=True)
         exit(1)
 
-    if not util.get_conf_value(CONF_KEY_SCENE_PREFIX, str, "") and not util.get_conf_value(CONF_KEY_SCENE_SUFFIX, str, ""):
+    if not utils.get_conf_value(CONF_KEY_SCENE_PREFIX, str, "") and not utils.get_conf_value(CONF_KEY_SCENE_SUFFIX, str, ""):
         echo("ERROR: Must specify at least one of '{prefix}' or '{suffix}' in configuration".format(prefix=CONF_KEY_SCENE_PREFIX, suffix=CONF_KEY_SCENE_SUFFIX), err=True)
         exit(1)
 
     global reinit_item_name
-    reinit_item_name = util.get_conf_value(CONF_KEY_REINIT_ITEM)
+    reinit_item_name = utils.get_conf_value(CONF_KEY_REINIT_ITEM)
     if reinit_item_name and validate_item(reinit_item_name, openhab_host) is None:
         echo("WARNING: Eos reload item '{name}' does not exist".format(name=reinit_item_name), err=True)
         reinit_item_name = ""
@@ -68,7 +68,7 @@ def load_config(openhab_host):
     if not master_group_item:
         echo("ERROR: Master group item '{group}' does not exist".format(group=master_group_name))
         exit(1)
-    elif master_group_item["type"] not in util.itemtypesGroup:
+    elif master_group_item["type"] not in utils.itemtypesGroup:
         echo("ERROR: Master group item '{group}' is not a GroupItem".format(group=master_group_name))
         exit(1)
 
@@ -101,20 +101,20 @@ def eos_editor(ctx, opt_openhab_host, opt_conf_path):
 
 @eos_editor.command()
 @click.option("-s", "--openhab-host", "opt_openhab_host", prompt="Enter your openHAB server address", default="localhost:8080", callback=validate_hostname, help="openHAB server address")
-@click.option("-c", "--configuration", "opt_conf_path", prompt="Path to 'configuration.py'", default=util.conf_path, callback=conf_file_exists, help="Helper Library 'configuration.py'")
+@click.option("-c", "--configuration", "opt_conf_path", prompt="Path to 'configuration.py'", default=utils.conf_path, callback=conf_file_exists, help="Helper Library 'configuration.py'")
 def live(opt_openhab_host, opt_conf_path):
     """Interactive editing of all lights in Eos"""
-    sys.modules[util.__name__].conf_path = opt_conf_path
+    sys.modules[utils.__name__].conf_path = opt_conf_path
     load_config(opt_openhab_host)
     menu.menu_navigate(master_group_name, opt_openhab_host)
 
 @eos_editor.command()
 @click.option("-s", "--openhab-host", "opt_openhab_host", prompt="Enter your openHAB server address", default="localhost:8080", callback=validate_hostname, help="openHAB server address")
-@click.option("-c", "--configuration", "opt_conf_path", prompt="Path to 'configuration.py'", default=util.conf_path, callback=conf_file_exists, help="Helper Library 'configuration.py'")
+@click.option("-c", "--configuration", "opt_conf_path", prompt="Path to 'configuration.py'", default=utils.conf_path, callback=conf_file_exists, help="Helper Library 'configuration.py'")
 @click.argument("arg_item_name")
 def edit(opt_openhab_host, opt_conf_path, arg_item_name):
     """Edit a single light"""
-    sys.modules[util.__name__].conf_path = opt_conf_path
+    sys.modules[utils.__name__].conf_path = opt_conf_path
     load_config(opt_openhab_host)
 
     item = validate_item(arg_item_name, opt_openhab_host)

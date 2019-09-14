@@ -40,9 +40,9 @@ import pygments.lexers.html
 HtmlLexer = pygments.lexers.html.HtmlLexer()
 
 from constants import *
-from rest_eos_util import *
-from rest_utils import validate_item, update_item
-from rest_metadata import get_metadata, set_metadata
+from utils import *
+from rest.utils import validate_item, update_item
+from rest.metadata import get_metadata, set_metadata
 
 eos_style = Style([
     ("qmark", "fg:#673ab7 bold"),

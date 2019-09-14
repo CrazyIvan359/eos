@@ -36,8 +36,8 @@ import importlib.util
 from click import echo
 
 from constants import *
-from rest_metadata import get_metadata, get_value
-from rest_utils import validate_item
+from rest.metadata import get_metadata, get_value
+from rest.utils import validate_item
 
 conf_path = os.path.realpath("{}{sep}..{sep}automation{sep}lib{sep}python{sep}configuration.py".format(os.path.dirname(os.path.realpath(__file__)), sep=os.sep))
 

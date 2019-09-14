@@ -32,14 +32,18 @@ else: # Python 3.x
 
 import os, json, copy, collections, six
 from ast import literal_eval
+import importlib.util
 from click import echo
 
 from constants import *
 from rest_metadata import get_metadata, get_value
 from rest_utils import validate_item
 
+conf_path = os.path.realpath("{}{sep}..{sep}automation{sep}lib{sep}python{sep}configuration.py".format(os.path.dirname(os.path.realpath(__file__)), sep=os.sep))
+
 
 __all__ = [
+    "conf_path",
     "get_conf_value", "validate_item_name", "get_scene_item", "get_light_items",
     "get_group_items", "resolve_type", "get_item_eos_group", "get_other_items",
     "update_dict", "get_global_settings", "get_source_group", "get_scene_setting",
@@ -48,14 +52,13 @@ __all__ = [
 
 
 def get_conf_value(name, valid_types=None, default=None):
-    """Get ``name`` from ``{$OH_CONF}/automation/lib/python/configuration.py``
+    """Get ``name`` from ``configuration.py``
 
     Returns ``default`` if not present or not one of types in ``valid_types``
     """
-    conf_path = os.path.realpath("{}{sep}..{sep}..{sep}..".format(os.path.dirname(os.path.realpath(__file__)), sep=os.sep))
-    sys.path.append(conf_path)
-    import configuration
-    sys.path.remove(conf_path)
+    spec = importlib.util.spec_from_file_location("*", conf_path)
+    configuration = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(configuration)
 
     if hasattr(configuration, name):
         value = getattr(configuration, name)
@@ -268,7 +271,9 @@ def get_scene_type(scene, light_type, data):
     if not light_type: return "unknown"
     def _scan_settings(min_depth, max_depth):
         for depth in range(min_depth, max_depth+1):
-            if get_scene_setting(scene, light_type, META_KEY_STATE, data, max_depth=depth) is not None:
+            if get_scene_setting(scene, light_type, META_KEY_ALIAS_SCENE, data, max_depth=depth) is not None:
+                return SCENE_TYPE_ALIAS
+            elif get_scene_setting(scene, light_type, META_KEY_STATE, data, max_depth=depth) is not None:
                 return SCENE_TYPE_FIXED
             elif light_type == LIGHT_TYPE_SWITCH:
                 if get_scene_setting(scene, light_type, META_KEY_LEVEL_THRESHOLD, data, max_depth=depth) is not None:

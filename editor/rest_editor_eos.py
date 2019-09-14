@@ -30,7 +30,7 @@ if sys.version_info[0] < 3: # Python 2.x
 else: # Python 3.x
     pass
 
-import json
+import os, json
 import requests as http
 import click
 from click import echo, clear
@@ -73,10 +73,25 @@ def load_config(openhab_host):
         exit(1)
 
 
+def conf_file_exists(ctx, param, value):
+    """
+    Validate conf file exists
+    """
+    conf_file = "configuration.py"
+    if value[-len(conf_file):] != conf_file:
+        value = os.path.join(value, conf_file)
+    value = os.path.realpath(value)
+    if os.path.isfile(value):
+        return value
+    else:
+        raise click.BadParameter("'configuration.py' not found at '{path}'".format(path=os.path.split(value)[0]))
+
+
 @click.group(invoke_without_command=True)
 @click.pass_context
 @click.option("-s", "--openhab-host", "opt_openhab_host")
-def eos_editor(ctx, opt_openhab_host):
+@click.option("-c", "--configuration", "opt_conf_path")
+def eos_editor(ctx, opt_openhab_host, opt_conf_path):
     """
     Eos Item Metadata Editor
 
@@ -86,16 +101,20 @@ def eos_editor(ctx, opt_openhab_host):
 
 @eos_editor.command()
 @click.option("-s", "--openhab-host", "opt_openhab_host", prompt="Enter your openHAB server address", default="localhost:8080", callback=validate_hostname, help="openHAB server address")
-def live(opt_openhab_host):
+@click.option("-c", "--configuration", "opt_conf_path", prompt="Path to 'configuration.py'", default=util.conf_path, callback=conf_file_exists, help="Helper Library 'configuration.py'")
+def live(opt_openhab_host, opt_conf_path):
     """Interactive editing of all lights in Eos"""
+    sys.modules[util.__name__].conf_path = opt_conf_path
     load_config(opt_openhab_host)
     menu.menu_navigate(master_group_name, opt_openhab_host)
 
 @eos_editor.command()
 @click.option("-s", "--openhab-host", "opt_openhab_host", prompt="Enter your openHAB server address", default="localhost:8080", callback=validate_hostname, help="openHAB server address")
+@click.option("-c", "--configuration", "opt_conf_path", prompt="Path to 'configuration.py'", default=util.conf_path, callback=conf_file_exists, help="Helper Library 'configuration.py'")
 @click.argument("arg_item_name")
-def edit(opt_openhab_host, arg_item_name):
+def edit(opt_openhab_host, opt_conf_path, arg_item_name):
     """Edit a single light"""
+    sys.modules[util.__name__].conf_path = opt_conf_path
     load_config(opt_openhab_host)
 
     item = validate_item(arg_item_name, opt_openhab_host)

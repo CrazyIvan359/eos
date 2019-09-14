@@ -189,8 +189,6 @@ class InquirerControl(FormattedTextControl):
                 tokens.append(("class:separator", "{}".format(choice.title)))
             elif choice.disabled:  # disabled
                 if isinstance(choice.title, list):
-                    tokens.append(("class:selected" if selected
-                                   else "class:disabled", "- "))
                     tokens.extend(choice.title)
                 else:
                     tokens.append(("class:selected" if selected

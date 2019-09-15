@@ -132,8 +132,19 @@ def resolve_type(value):
             return literal_eval(value)
         except ValueError:
             pass
-        # parseable
+        except SyntaxError:
+            pass
+        # attempt to cast
+        try:
+            return int(value)
+        except:
+            pass
+        try:
+            return float(value)
+        except:
+            pass
         return value
+
 
 def get_item_eos_group(item, host):
     """Gets the Eos group from the item's groups.

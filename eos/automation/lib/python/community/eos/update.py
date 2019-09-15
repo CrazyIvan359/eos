@@ -128,6 +128,12 @@ def get_state_for_scene(item, scene):
         log.debug("Got Group data for '{name}': {data}".format(name=get_item_eos_group(item).name, data=data["group"]))
         log.debug("Got Global data: {data}".format(name=light_type, data=data["global"]))
 
+    # check for a scene alias setting
+    alias_scene = get_scene_setting(item, scene, META_KEY_ALIAS_SCENE, data=data)
+    if alias_scene is not None:
+        log.debug("Got alias scene '{alias}' for scene '{scene}', evaluating it instead".format(alias=alias_scene, scene=scene))
+        scene = alias_scene
+
     # check for Motion settings
     motion_source = validate_item(get_scene_setting(item, scene, META_KEY_MOTION_SOURCE, data=data))
     if motion_source:

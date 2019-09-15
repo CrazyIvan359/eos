@@ -368,6 +368,9 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
             return scan_depth
 
         property_map = {
+            SCENE_TYPE_ALIAS: [
+                META_KEY_ALIAS_SCENE
+            ],
             SCENE_TYPE_FIXED: [
                 META_KEY_STATE
             ],
@@ -381,20 +384,21 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
                 META_KEY_STATE_ABOVE, META_KEY_STATE_BELOW
             ]
         }
-        if key in [META_KEY_MOTION_SOURCE, META_KEY_MOTION_ACTIVE, META_KEY_MOTION_STATE, META_KEY_MOTION_SCENE] \
+        if scene_type != SCENE_TYPE_ALIAS \
+                and key in [META_KEY_MOTION_SOURCE, META_KEY_MOTION_ACTIVE, META_KEY_MOTION_STATE, META_KEY_MOTION_SCENE] \
                 and get_scene_setting(scene, light_type, META_KEY_MOTION_SOURCE, data, min_depth=depth) is not None:
             if key == META_KEY_MOTION_SCENE:
                 if _get_setting_depth(META_KEY_MOTION_SCENE) <= _get_setting_depth(META_KEY_MOTION_STATE):
-                    return True
+                    return True and light_type and scene
                 else:
                     return False
             elif key == META_KEY_MOTION_STATE:
                 if _get_setting_depth(META_KEY_MOTION_STATE) < _get_setting_depth(META_KEY_MOTION_SCENE):
-                    return True
+                    return True and light_type and scene
                 else:
                     return False
             else:
-                return True
+                return True and light_type and scene
         else:
             return key in property_map.get(scene_type, {}) and light_type and scene
 

@@ -1,5 +1,12 @@
 # Eos Change Log
 
+## 0.2.0
+
+* __Changed__: Editor now prompts for `configuration.py` location.
+* __Added__: Scene alias setting that allows you to provide the name of a
+  different scene to evaluate. Allows multiple scene names to reuse the same
+  settings.
+
 ## 0.1.1
 
 * __Added__: Log Eos version on startup.

@@ -467,12 +467,12 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
             if answer == "eos_menu_eos_group": pointed_at = len(menu_choices)
             menu_choices.append(Choice(     # Item Eos Group
                     title=[
-                        ("class:{}".format("disabled" if view_only or not item["editable"] else "text"),
+                        ("class:{}".format("disabled" if view_only or not item.get("editable", False) else "text"),
                             "{:{width}}".format("Eos Group", width=col_left_width)),
                         ("class:value", "{:{width}}".format(item_eos_group["name"], width=col_right_width))
                     ],
                     value="eos_menu_eos_group",
-                    disabled=not item["editable"]
+                    disabled=not item.get("editable", False)
                 ))
         if light_type:
             menu_choices.append(Choice(     # Light Type

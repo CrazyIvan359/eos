@@ -103,8 +103,7 @@ def init(rule_reinit, rule_scene_command, rule_scene_changed, rule_light_update,
             else:
                 log.warn("No lights or groups in '{group}' will be discovered because it has no scene item".format(group=group.name))
 
-    log.info("Eos initializing...")
-    log.info("Eos Version {}".format(eos.__version__))
+    log.info("Eos Version {} initializing...".format(eos.__version__))
 
     config.load()
 

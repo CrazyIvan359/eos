@@ -1,5 +1,11 @@
 # Eos Change Log
 
+## 0.2.1
+
+* __Changed__: Moved `290_eos.py` script to `eos` folder.
+* __Fixed__: Editor crashing with `literal_eval` `SyntaxError`.
+* __Fixed__: Editor crashing with `KeyError` when selecting `Configure Group`.
+
 ## 0.2.0
 
 * __Changed__: Editor now prompts for `configuration.py` location.

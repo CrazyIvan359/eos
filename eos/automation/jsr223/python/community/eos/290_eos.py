@@ -19,14 +19,14 @@ def eos_rule_scene_command(event):
     """Eos Scene received command Rule"""
     log.critical("{rule} triggered by '{name}' with scene '{scene}'".format(
         rule=RULE_SCENE_COMMAND_NAME, name=event.itemName, scene=event.itemCommand))
-    update_scene(itemRegistry.get(event.itemName))
+    update_scene(itemRegistry.get(event.itemName), scene=str(event.itemCommand).lower())
 
 
 def eos_rule_scene_changed(event):
     """Eos Scene changed Rule"""
     log.critical("{rule} triggered by '{name}' with scene '{scene}'".format(
         rule=RULE_SCENE_CHANGED_NAME, name=event.itemName, scene=event.itemState))
-    update_group(itemRegistry.get(event.itemName))
+    update_group(itemRegistry.get(event.itemName), scene=str(event.itemState).lower())
 
 
 def eos_rule_light_update(event):

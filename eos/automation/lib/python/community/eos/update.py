@@ -44,16 +44,17 @@ def update_eos():
 
 
 @log_traceback
-def update_scene(item):
+def update_scene(item, scene=None):
     """
     Updates all lights and subgroups, and propagates scene change to children
     with ``follow_parent`` set to ``True``.
     """
+    scene = scene or str(item.state).lower()
     log.info("Changing '{group}' scene to '{scene}'".format(
         group=get_item_eos_group(item).name, scene=item.state))
 
     for light_item in get_light_items(get_item_eos_group(item)):
-        try: update_light(light_item)
+        try: update_light(light_item, scene=scene)
         except: continue
 
     for group_item in get_group_items(get_item_eos_group(item)):
@@ -68,7 +69,7 @@ def update_scene(item):
 
 
 @log_traceback
-def update_light(item):
+def update_light(item, scene=None):
     """
     Sends commands to lights based on scene.
     """
@@ -78,7 +79,7 @@ def update_light(item):
     else:
         log.critical("Processing update for light '{name}'".format(name=item.name))
 
-    scene = get_scene_for_item(item)
+    scene = scene or get_scene_for_item(item)
     log.critical("Got scene '{scene}' for item '{name}'".format(scene=scene, name=item.name))
 
     if scene != SCENE_MANUAL:
@@ -95,7 +96,7 @@ def update_light(item):
 
 
 @log_traceback
-def update_group(target, only_if_scene_parent=False):
+def update_group(target, only_if_scene_parent=False, scene=None):
     if str(get_value(target.name, META_NAME_EOS)).lower() in META_STRING_FALSE:
         log.critical("Skipping update for group '{name}' as it is disabled".format(
             name=target.name))
@@ -104,15 +105,16 @@ def update_group(target, only_if_scene_parent=False):
         log.critical("Processing update for group '{name}'".format(
             name=target.name))
 
-    if only_if_scene_parent and str(get_scene_item(target).state).lower() != SCENE_PARENT:
+    scene = scene or str(get_scene_item(target).state).lower()
+    if only_if_scene_parent and scene != SCENE_PARENT:
         return
 
     for light_item in get_light_items(target):
-        try: update_light(light_item)
+        try: update_light(light_item, scene=scene)
         except: continue
 
     for group_item in get_group_items(target):
-        update_group(group_item, only_if_scene_parent)
+        update_group(group_item, only_if_scene_parent, scene=scene)
 
 
 def get_state_for_scene(item, scene):

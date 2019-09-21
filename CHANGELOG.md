@@ -1,5 +1,10 @@
 # Eos Change Log
 
+## 0.2.2
+
+* __Fixed__: Use event command or state when applying scene changes or updates.
+* __Changed__: Clean up and reduce the amount of logging.
+
 ## 0.2.1
 
 * __Changed__: Moved `290_eos.py` script to `eos` folder.

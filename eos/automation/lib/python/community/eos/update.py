@@ -49,6 +49,9 @@ def update_scene(item):
     Updates all lights and subgroups, and propagates scene change to children
     with ``follow_parent`` set to ``True``.
     """
+    log.info("Changing '{group}' scene to '{scene}'".format(
+        group=get_item_eos_group(item).name, scene=item.state))
+
     for light_item in get_light_items(get_item_eos_group(item)):
         try: update_light(light_item)
         except: continue
@@ -57,7 +60,8 @@ def update_scene(item):
         if str(get_value(group_item.name, META_NAME_EOS)).lower() not in META_STRING_FALSE:
             # set children to "parent" scene unless following is turned off
             if resolve_type(get_metadata(group_item.name, META_NAME_EOS).get("configuration", {}).get(META_KEY_FOLLOW_PARENT, True)):
-                log.debug("Setting '{group}' to follow '{name}' scene".format(group=group_item.name, name=item.name))
+                log.debug("Commanding '{group}' scene to 'parent'".format(
+                    group=group_item.name))
                 sendCommand(get_scene_item(group_item).name, SCENE_PARENT)
             else:
                 update_group(group_item, True)
@@ -69,31 +73,36 @@ def update_light(item):
     Sends commands to lights based on scene.
     """
     if str(get_value(item.name, META_NAME_EOS)).lower() in META_STRING_FALSE:
-        log.debug("Skipping update for light '{name}' as it is disabled".format(name=item.name))
+        log.critical("Skipping update for light '{name}' as it is disabled".format(name=item.name))
         return
     else:
-        log.debug("Processing update for light '{name}'".format(name=item.name))
+        log.critical("Processing update for light '{name}'".format(name=item.name))
 
     scene = get_scene_for_item(item)
-    if config.log_trace: log.debug("Got scene '{scene}' for item '{name}'".format(scene=scene, name=item.name))
+    log.critical("Got scene '{scene}' for item '{name}'".format(scene=scene, name=item.name))
 
     if scene != SCENE_MANUAL:
         newState = get_state_for_scene(item, scene)
         if sendCommandCheckFirst(item.name, newState, floatPrecision=3):
-            log.debug("Sent command '{command}' to light '{name}'".format(command=newState, name=item.name))
+            log.debug("Light '{name}' scene is '{scene}', sent command '{command}'".format(
+                name=item.name, scene=scene, command=newState))
         else:
-            log.debug("No command sent to light '{name}'".format(command=newState, name=item.name))
+            log.debug("Light '{name}' scene is '{scene}', state is already '{command}'".format(
+                name=item.name, scene=scene, command=newState))
     else:
-        log.debug("Scene for item '{name}' is '{scene}', no action taken".format(name=item.name, scene=scene))
+        log.debug("Light '{name}' scene is '{scene}', no action taken".format(
+            name=item.name, scene=scene))
 
 
 @log_traceback
 def update_group(target, only_if_scene_parent=False):
     if str(get_value(target.name, META_NAME_EOS)).lower() in META_STRING_FALSE:
-        log.debug("Skipping update for group '{name}' as it is disabled".format(name=target.name))
+        log.critical("Skipping update for group '{name}' as it is disabled".format(
+            name=target.name))
         return
     else:
-        log.debug("Processing update for group '{name}'".format(name=target.name))
+        log.critical("Processing update for group '{name}'".format(
+            name=target.name))
 
     if only_if_scene_parent and str(get_scene_item(target).state).lower() != SCENE_PARENT:
         return
@@ -116,22 +125,28 @@ def get_state_for_scene(item, scene):
     # get Eos Light Type
     light_type = LIGHT_TYPE_MAP.get(item.type.lower(), None)
     if light_type is None:
-        log.error("Couldn't get light type for '{name}'".format(name=item.name))
+        log.error("Couldn't get light type for '{name}'".format(
+            name=item.name))
         return str(item.state)
     else:
-        if config.log_trace: log.debug("Got light type '{type}' for '{name}'".format(type=light_type, name=item.name))
+        log.critical("Got light type '{type}' for '{name}'".format(
+            type=light_type, name=item.name))
 
     state = None
     data = build_data(item)
     if config.log_trace:
-        log.debug("Got Item data for '{name}': {data}".format(name=item.name, data=data["item"]))
-        log.debug("Got Group data for '{name}': {data}".format(name=get_item_eos_group(item).name, data=data["group"]))
-        log.debug("Got Global data: {data}".format(name=light_type, data=data["global"]))
+        log.critical("Got Item data for '{name}': {data}".format(
+            name=item.name, data=data["item"]))
+        log.critical("Got Group data for '{name}': {data}".format(
+            name=get_item_eos_group(item).name, data=data["group"]))
+        log.critical("Got Global data: {data}".format(
+            name=light_type, data=data["global"]))
 
     # check for a scene alias setting
     alias_scene = get_scene_setting(item, scene, META_KEY_ALIAS_SCENE, data=data)
     if alias_scene is not None:
-        log.debug("Got alias scene '{alias}' for scene '{scene}', evaluating it instead".format(alias=alias_scene, scene=scene))
+        log.debug("Got alias scene '{alias}' for '{name}' for scene '{scene}', evaluating it instead".format(
+            alias=alias_scene, name=item.name, scene=scene))
         scene = alias_scene
 
     # check for Motion settings
@@ -141,19 +156,22 @@ def get_state_for_scene(item, scene):
         motion_state = get_scene_setting(item, scene, META_KEY_MOTION_STATE, data=data)
         motion_scene = get_scene_setting(item, scene, META_KEY_MOTION_SCENE, data=data)
         if motion_active is not None and (motion_state is not None or motion_scene):
-            log.debug("Checking Motion trigger for '{name}' for scene '{scene}'".format(name=item.name, scene=scene))
+            log.critical("Checking Motion trigger for '{name}' for scene '{scene}'".format(
+                name=item.name, scene=scene))
             if str(motion_source.state) == str(motion_active):
-                log.debug("Motion trigger is active for '{name}' for scene '{scene}'".format(name=item.name, scene=scene))
+                log.debug("Motion is active for '{name}' for scene '{scene}'".format(
+                    name=item.name, scene=scene))
                 if motion_state is not None:
-                    log.debug("Motion trigger applying fixed state '{motion}' for '{name}' for scene '{scene}'".format(
+                    log.critical("Motion trigger applying fixed state '{motion}' for '{name}' for scene '{scene}'".format(
                             motion=motion_state, name=item.name, scene=scene))
                     state = motion_state
                 elif motion_scene:
-                    log.debug("Motion trigger applying scene '{motion}' for '{name}' for scene '{scene}'".format(
+                    log.critical("Motion trigger applying scene '{motion}' for '{name}' for scene '{scene}'".format(
                             motion=motion_scene, name=item.name, scene=scene))
                     scene = motion_scene
             else:
-                log.debug("Motion trigger is not active for '{name}' for scene '{scene}'".format(name=item.name, scene=scene))
+                log.critical("Motion trigger is not active for '{name}' for scene '{scene}'".format(
+                    name=item.name, scene=scene))
         elif motion_active is None:
             log.warn("Motion triggers require '{key}' setting, nothing found for '{name}' for scene '{scene}'".format(
                     key=META_KEY_MOTION_ACTIVE, name=item.name, scene=scene))
@@ -164,10 +182,12 @@ def get_state_for_scene(item, scene):
     # get Scene Type
     scene_type = get_scene_type(item, scene, light_type, data=data)
     if scene_type is None:
-        log.error("Couldn't get scene type for '{name}'".format(name=item.name))
+        log.error("Couldn't get scene type for '{name}'".format(
+            name=item.name))
         return str(item.state)
     else:
-        if config.log_trace: log.debug("Got scene type '{type}' for '{name}'".format(type=scene_type, name=item.name))
+        log.critical("Got scene type '{type}' for '{name}'".format(
+            type=scene_type, name=item.name))
 
     # Fixed State type
     if scene_type == SCENE_TYPE_FIXED and state is None:
@@ -266,7 +286,8 @@ def get_state_for_scene(item, scene):
                 state.append(scale(float(state_low[2]), float(state_high[2])))
 
     elif state is None:
-        log.error("Invalid scene configuration for '{name}' scene '{scene}'".format(name=item.name, scene=scene))
+        log.error("Invalid scene configuration for '{name}' scene '{scene}'".format(
+            name=item.name, scene=scene))
         return str(item.state)
 
     if light_type == LIGHT_TYPE_SWITCH and isinstance(state, (str)) and state.upper() in ["ON", "OFF"]:
@@ -292,6 +313,6 @@ def get_state_for_scene(item, scene):
             state=state, name=item.name, scene=scene, type=item.type))
         return str(item.state)
 
-    log.debug("Determined {type} state '{state}' for '{name}' scene '{scene}'".format(
-            type=scene_type, state=state, name=item.name, scene=scene))
+    log.critical("Determined {type} state '{state}' for '{name}' scene '{scene}'".format(
+        type=scene_type, state=state, name=item.name, scene=scene))
     return state

@@ -50,11 +50,12 @@ def _get_conf_value(name, valid_types=None, default=None):
             log.debug("Got '{name}': '{value}' from configuration".format(name=name, value=value))
             return value
         else:
-            log.error("'{name}' is type '{type}', must be one of '{valid_types}'".format(
+            log.error("Configuration value for '{name}' is type '{type}', must be one of {valid_types}".format(
                 name=name, type=type(value), valid_types=valid_types))
             return default
     else:
-        log.debug("No '{name}' specified in configuration".format(name=name))
+        log.debug("No value for '{name}' specified in configuration, using default '{value}'".format(
+            name=name, value=default))
         return default
 
 def update_dict(d, u):

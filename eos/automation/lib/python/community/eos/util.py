@@ -77,7 +77,8 @@ def get_scene_item(group):
     if not group: return None
     items = [item for item in group.members if validate_item_name(item.name, config.scene_item_prefix, config.scene_item_suffix)]
     if not items:
-        if config.log_trace: log.debug("Group '{group}' does not contain a scene item".format(group=group.name))
+        log.critical("Group '{group}' does not contain a scene item".format(
+            group=group.name))
         return None
     elif len(items) > 1 and "restore" in group.name.lower():
         # probably a restore on startup group, skip
@@ -86,13 +87,16 @@ def get_scene_item(group):
         itemList = ""
         for item in items: itemList = "{list}'{name}', ".format(list=itemList, name=item.name)
         log.debug("Group '{group}' contains more than one scene item. Each group can only have one scene item, please correct. ({list})".format(
-                group=group.name, list=itemList[:-2]))
+            group=group.name, list=itemList[:-2]))
         return None
     elif not isinstance(items[0], itemtypesScene):
-        log.error("Group '{group}' scene item '{name}' is not a StringItem".format(group=group.name, name=items[0].name))
+        log.error("Group '{group}' scene item '{name}' is not a StringItem".format(
+            group=group.name, name=items[0].name))
         return None
     else:
-        if config.log_trace: log.debug("Got scene item '{name}' for group '{group}'".format(name=items[0].name, group=group.name))
+        if config.log_trace:
+            log.debug("Got scene item '{name}' for group '{group}'".format(
+                name=items[0].name, group=group.name))
         return items[0]
 
 
@@ -130,16 +134,20 @@ def get_item_eos_group(item):
     groups = [group for group in item.groupNames if get_scene_item(validate_item(group))]
     if not groups:
         if item.name != config.master_group_name:
-            log.error("No Eos group found for item '{name}'".format(name=item.name))
+            log.error("No Eos group found for item '{name}'".format(
+                name=item.name))
         return None
     elif len(groups) > 1:
         groupList = ""
         for group in groups: groupList = "{list}'{group}', ".format(list=groupList, group=group)
-        log.error("Item '{name}' is a memeber of more than one Eos group: {list}".format(name=item.name, list=groupList[:-2]))
+        log.error("Item '{name}' is a memeber of more than one Eos group: {list}".format(
+            name=item.name, list=groupList[:-2]))
         log.error("Each item can only be a member of one Eos group, please correct.")
         return None
     else:
-        if config.log_trace: log.debug("Got Eos group '{group}' for item '{name}'".format(group=groups[0], name=item.name))
+        if config.log_trace:
+            log.debug("Got Eos group '{group}' for item '{name}'".format(
+                group=groups[0], name=item.name))
         return validate_item(groups[0])
 
 

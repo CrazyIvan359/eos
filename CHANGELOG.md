@@ -1,6 +1,6 @@
 # Eos Change Log
 
-## Development
+## 0.2.3
 
 * **Fixed**
   * Bug introduced in `0.2.2` where event scene would be used for all groups

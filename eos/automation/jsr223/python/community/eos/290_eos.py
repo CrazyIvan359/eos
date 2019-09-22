@@ -6,6 +6,7 @@ from core.log import log_traceback
 from community.eos import log
 from community.eos.system import init, uninit
 from community.eos.update import update_light, update_group, update_scene, update_eos
+from community.eos.util import get_item_eos_group
 from community.eos.constants import *
 
 
@@ -26,7 +27,7 @@ def eos_rule_scene_changed(event):
     """Eos Scene changed Rule"""
     log.debug("{rule} triggered by '{name}' with scene '{scene}'".format(
         rule=RULE_SCENE_CHANGED_NAME, name=event.itemName, scene=event.itemState))
-    update_group(itemRegistry.get(event.itemName), scene=str(event.itemState).lower())
+    update_group(get_item_eos_group(itemRegistry.get(event.itemName)), scene=str(event.itemState).lower())
 
 
 def eos_rule_light_update(event):

@@ -5,6 +5,8 @@
 * **Fixed**
   * Bug introduced in `0.2.2` where event scene would be used for all groups
     when doing recursive updates.
+  * Scene changed rule would pass scene item to `update_group` but it expects
+    a group.
 
 ## 0.2.2
 

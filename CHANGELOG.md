@@ -2,34 +2,46 @@
 
 ## 0.2.2
 
-* __Fixed__: Use event command or state when applying scene changes or updates.
-* __Changed__: Clean up and reduce the amount of logging.
+* **Changed**
+  * Clean up and reduce the amount of logging.
+
+* **Fixed**
+  * Use event command or state when applying scene changes or updates.
 
 ## 0.2.1
 
-* __Changed__: Moved `290_eos.py` script to `eos` folder.
-* __Fixed__: Editor crashing with `literal_eval` `SyntaxError`.
-* __Fixed__: Editor crashing with `KeyError` when selecting `Configure Group`.
+* **Changed**
+  * Moved `290_eos.py` script to `eos` folder.
+
+* **Fixed**
+  * Editor crashing with `literal_eval` `SyntaxError`.
+  * Editor crashing with `KeyError` when selecting `Configure Group`.
 
 ## 0.2.0
 
-* __Changed__: Editor now prompts for `configuration.py` location.
-* __Added__: Scene alias setting that allows you to provide the name of a
-  different scene to evaluate. Allows multiple scene names to reuse the same
-  settings.
+* **Added**
+  * Scene alias setting that allows you to provide the name of a
+    different scene to evaluate. Allows multiple scene names to reuse the same
+    settings.
+
+* **Changed**
+  * Editor now prompts for `configuration.py` location.
 
 ## 0.1.1
 
-* __Added__: Log Eos version on startup.
-* __Added__: Scene item changed rule. Previously only *received command* events
-  would trigger a scene update and propagate the scene to group children. Now
-  you can change the a scene item's state and it will trigger a scene update,
-  but will **not** propagate the scene change to group children.
-* __Changed__: Group settings are now inheritted recursively from parent
-  groups. Editor shows the source group name if it's not the current group.
-* __Changed__: Values from `configuration.py` are reloaded when Eos is
-  reinitialized.
+* **Added**
+  * Log Eos version on startup.
+  * Scene item changed rule. Previously only *received command* events
+    would trigger a scene update and propagate the scene to group children. Now
+    you can change the a scene item's state and it will trigger a scene update,
+    but will **not** propagate the scene change to group children.
+
+* **Changed**
+  * Group settings are now inheritted recursively from parent
+    groups. Editor shows the source group name if it's not the current group.
+  * Values from `configuration.py` are reloaded when Eos is
+    reinitialized.
 
 ## 0.1.0
 
-* Initial Beta release
+Initial Beta release

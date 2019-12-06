@@ -1,5 +1,10 @@
 # Eos Change Log
 
+## Development
+
+* **Fixed**
+  * Motion source rule not being removed on reload.
+
 ## 0.2.3
 
 * **Fixed**

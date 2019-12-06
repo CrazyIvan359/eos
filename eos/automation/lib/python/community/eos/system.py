@@ -145,7 +145,7 @@ def init(rule_reinit, rule_scene_command, rule_scene_changed, rule_light_update,
         log.error("Eos failed to initialize")
         return
 
-    for objRule in [objRule for objRule in ruleRegistry.getAll() if objRule.name in [RULE_REINIT_NAME, RULE_SCENE_COMMAND_NAME, RULE_SCENE_CHANGED_NAME, RULE_LIGHT_NAME, RULE_LEVEL_SOURCE_NAME]]:
+    for objRule in [objRule for objRule in ruleRegistry.getAll() if objRule.name in [RULE_REINIT_NAME, RULE_SCENE_COMMAND_NAME, RULE_SCENE_CHANGED_NAME, RULE_LIGHT_NAME, RULE_LEVEL_SOURCE_NAME, RULE_MOTION_SOURCE_NAME]]:
         log.debug("Removing existing {rule} with UID '{uid}'".format(
             rule=objRule.name, uid=objRule.UID))
         ruleRegistry.remove(objRule.UID)
@@ -254,7 +254,7 @@ def uninit():
     """
     log.info("Eos uninitializing...")
 
-    for objRule in [objRule for objRule in ruleRegistry.getAll() if objRule.name in [RULE_REINIT_NAME, RULE_SCENE_COMMAND_NAME, RULE_SCENE_CHANGED_NAME, RULE_LIGHT_NAME, RULE_LEVEL_SOURCE_NAME]]:
+    for objRule in [objRule for objRule in ruleRegistry.getAll() if objRule.name in [RULE_REINIT_NAME, RULE_SCENE_COMMAND_NAME, RULE_SCENE_CHANGED_NAME, RULE_LIGHT_NAME, RULE_LEVEL_SOURCE_NAME, RULE_MOTION_SOURCE_NAME]]:
         log.info("Removing {rule} with UID '{uid}'".format(
             rule=objRule.name, uid=objRule.UID))
         ruleRegistry.remove(objRule.UID)

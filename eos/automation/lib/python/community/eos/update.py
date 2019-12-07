@@ -74,13 +74,15 @@ def update_light(item, scene=None):
     Sends commands to lights based on scene.
     """
     if str(get_value(item.name, META_NAME_EOS)).lower() in META_STRING_FALSE:
-        log.critical("Skipping update for light '{name}' as it is disabled".format(name=item.name))
+        if config.log_trace:
+            log.debug("Skipping update for light '{name}' as it is disabled".format(name=item.name))
         return
-    else:
-        log.critical("Processing update for light '{name}'".format(name=item.name))
+    elif config.log_trace:
+        log.debug("Processing update for light '{name}'".format(name=item.name))
 
     scene = scene if scene and scene != SCENE_PARENT else get_scene_for_item(item)
-    log.critical("Got scene '{scene}' for item '{name}'".format(scene=scene, name=item.name))
+    if config.log_trace:
+        log.debug("Got scene '{scene}' for item '{name}'".format(scene=scene, name=item.name))
 
     if scene != SCENE_MANUAL:
         newState = get_state_for_scene(item, scene)
@@ -98,11 +100,12 @@ def update_light(item, scene=None):
 @log_traceback
 def update_group(target, only_if_scene_parent=False, scene=None, parent_scene=None):
     if str(get_value(target.name, META_NAME_EOS)).lower() in META_STRING_FALSE:
-        log.critical("Skipping update for group '{name}' as it is disabled".format(
-            name=target.name))
+        if config.log_trace:
+            log.debug("Skipping update for group '{name}' as it is disabled".format(
+                name=target.name))
         return
-    else:
-        log.critical("Processing update for group '{name}'".format(
+    elif config.log_trace:
+        log.debug("Processing update for group '{name}'".format(
             name=target.name))
 
     scene = scene or str(get_scene_item(target).state).lower()
@@ -132,18 +135,18 @@ def get_state_for_scene(item, scene):
         log.error("Couldn't get light type for '{name}'".format(
             name=item.name))
         return str(item.state)
-    else:
-        log.critical("Got light type '{type}' for '{name}'".format(
+    elif config.log_trace:
+        log.debug("Got light type '{type}' for '{name}'".format(
             type=light_type, name=item.name))
 
     state = None
     data = build_data(item)
     if config.log_trace:
-        log.critical("Got Item data for '{name}': {data}".format(
+        log.debug("Got Item data for '{name}': {data}".format(
             name=item.name, data=data["item"]))
-        log.critical("Got Group data for '{name}': {data}".format(
+        log.debug("Got Group data for '{name}': {data}".format(
             name=get_item_eos_group(item).name, data=data["group"]))
-        log.critical("Got Global data: {data}".format(
+        log.debug("Got Global data: {data}".format(
             name=light_type, data=data["global"]))
 
     # check for a scene alias setting
@@ -160,21 +163,21 @@ def get_state_for_scene(item, scene):
         motion_state = get_scene_setting(item, scene, META_KEY_MOTION_STATE, data=data)
         motion_scene = get_scene_setting(item, scene, META_KEY_MOTION_SCENE, data=data)
         if motion_active is not None and (motion_state is not None or motion_scene):
-            log.critical("Checking Motion trigger for '{name}' for scene '{scene}'".format(
+            log.debug("Checking Motion trigger for '{name}' for scene '{scene}'".format(
                 name=item.name, scene=scene))
             if str(motion_source.state) == str(motion_active):
                 log.debug("Motion is active for '{name}' for scene '{scene}'".format(
                     name=item.name, scene=scene))
                 if motion_state is not None:
-                    log.critical("Motion trigger applying fixed state '{motion}' for '{name}' for scene '{scene}'".format(
+                    log.debug("Motion trigger applying fixed state '{motion}' for '{name}' for scene '{scene}'".format(
                             motion=motion_state, name=item.name, scene=scene))
                     state = motion_state
                 elif motion_scene:
-                    log.critical("Motion trigger applying scene '{motion}' for '{name}' for scene '{scene}'".format(
+                    log.debug("Motion trigger applying scene '{motion}' for '{name}' for scene '{scene}'".format(
                             motion=motion_scene, name=item.name, scene=scene))
                     scene = motion_scene
             else:
-                log.critical("Motion trigger is not active for '{name}' for scene '{scene}'".format(
+                log.debug("Motion trigger is not active for '{name}' for scene '{scene}'".format(
                     name=item.name, scene=scene))
         elif motion_active is None:
             log.warn("Motion triggers require '{key}' setting, nothing found for '{name}' for scene '{scene}'".format(
@@ -189,8 +192,8 @@ def get_state_for_scene(item, scene):
         log.error("Couldn't get scene type for '{name}'".format(
             name=item.name))
         return str(item.state)
-    else:
-        log.critical("Got scene type '{type}' for '{name}'".format(
+    elif config.log_trace:
+        log.debug("Got scene type '{type}' for '{name}'".format(
             type=scene_type, name=item.name))
 
     # Fixed State type
@@ -317,6 +320,6 @@ def get_state_for_scene(item, scene):
             state=state, name=item.name, scene=scene, type=item.type))
         return str(item.state)
 
-    log.critical("Determined {type} state '{state}' for '{name}' scene '{scene}'".format(
+    log.debug("Determined {type} state '{state}' for '{name}' scene '{scene}'".format(
         type=scene_type, state=state, name=item.name, scene=scene))
     return state

@@ -77,8 +77,9 @@ def get_scene_item(group):
     if not group: return None
     items = [item for item in group.members if validate_item_name(item.name, config.scene_item_prefix, config.scene_item_suffix)]
     if not items:
-        log.critical("Group '{group}' does not contain a scene item".format(
-            group=group.name))
+        if config.log_trace:
+            log.debug("Group '{group}' does not contain a scene item".format(
+                group=group.name))
         return None
     elif len(items) > 1 and "restore" in group.name.lower():
         # probably a restore on startup group, skip

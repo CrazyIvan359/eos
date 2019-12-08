@@ -1,6 +1,6 @@
 # Eos Change Log
 
-## Development
+## 0.2.5
 
 * **Fixed**
   * Some log messages being sent to non-existant logger `critical`.

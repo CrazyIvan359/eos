@@ -2,6 +2,7 @@
 
 [![Latest Version](https://img.shields.io/github/v/tag/CrazyIvan359/eos?label=release)](https://github.com/CrazyIvan359/eos/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/CrazyIvan359/eos/blob/master/LICENSE)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Like the goddess of the dawn, Eos will bring light to your home with intuitive
 control and custom scenes.

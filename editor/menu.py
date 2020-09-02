@@ -25,9 +25,10 @@ Eos Lighting Metadata Editor - Menus
 # SOFTWARE.
 
 import sys
-if sys.version_info[0] < 3: # Python 2.x
+
+if sys.version_info[0] < 3:  # Python 2.x
     str = basestring
-else: # Python 3.x
+else:  # Python 3.x
     pass
 
 import copy, six
@@ -37,6 +38,7 @@ from questionary import select, Choice, Separator, text, confirm
 from prompt_toolkit.styles import Style
 from pygments import lex
 import pygments.lexers.html
+
 HtmlLexer = pygments.lexers.html.HtmlLexer()
 
 from constants import *
@@ -44,30 +46,33 @@ from utils import *
 from rest.utils import validate_item, update_item
 from rest.metadata import get_metadata, set_metadata
 
-eos_style = Style([
-    ("qmark", "fg:#673ab7 bold"),
-    ("question", "bold"),
-    ("answer", "fg:#f44336 bold"),
-    ("highlighted", "fg:#cc5454"),
-    ("selected", "fg:#cc5454"),
-    ("text", "fg:#d4d4d4"),
-    ("separator", 'fg:#c4c43f'),
-    ("pointer", 'fg:#ff9d00 bold'),
-    ("itemtype", "fg:#559ad4"),
-    ("itemname", "fg:#d4d4d4"),
-    ("itemlabel", "fg:#ce9178"),
-    ("titletype", "fg:#559ad4 bold"),
-    ("titlename", "fg:#d4d4d4 bold"),
-    ("titlelabel", "fg:#ce9178 bold"),
-    ("instruction", "fg:#d4d4d4 italic"),
-    ("disabled", "fg:#858585 italic"),
-    ("value", "fg:#9cdcfe"),
-    ("valueapplies", "fg:#4ec932"),
-    ("valuerequired", "fg:#f0300c bold")
-])
+eos_style = Style(
+    [
+        ("qmark", "fg:#673ab7 bold"),
+        ("question", "bold"),
+        ("answer", "fg:#f44336 bold"),
+        ("highlighted", "fg:#cc5454"),
+        ("selected", "fg:#cc5454"),
+        ("text", "fg:#d4d4d4"),
+        ("separator", "fg:#c4c43f"),
+        ("pointer", "fg:#ff9d00 bold"),
+        ("itemtype", "fg:#559ad4"),
+        ("itemname", "fg:#d4d4d4"),
+        ("itemlabel", "fg:#ce9178"),
+        ("titletype", "fg:#559ad4 bold"),
+        ("titlename", "fg:#d4d4d4 bold"),
+        ("titlelabel", "fg:#ce9178 bold"),
+        ("instruction", "fg:#d4d4d4 italic"),
+        ("disabled", "fg:#858585 italic"),
+        ("value", "fg:#9cdcfe"),
+        ("valueapplies", "fg:#4ec932"),
+        ("valuerequired", "fg:#f0300c bold"),
+    ]
+)
 
 col_left_width = 17
 col_right_width = 25
+
 
 def menu_navigate(root_group_name, host, back_group=None):
     """
@@ -88,92 +93,175 @@ def menu_navigate(root_group_name, host, back_group=None):
 
         menu_choices = []
         menu_choices.append(Separator(line=" "))
-        menu_choices.append(Choice(
+        menu_choices.append(
+            Choice(
                 title=[
                     ("class:titletype", "Group"),
                     ("class:titlename", " {}".format(root_group["name"])),
-                    ("class:titlelabel", "{}".format(" \"{}\"".format(root_group["label"]) if "label" in root_group else ""))
+                    (
+                        "class:titlelabel",
+                        "{}".format(
+                            ' "{}"'.format(root_group["label"])
+                            if "label" in root_group
+                            else ""
+                        ),
+                    ),
                 ],
-                disabled=True
-            ))
+                disabled=True,
+            )
+        )
         if item_eos_group:
-            menu_choices.append(Choice(     # Item Eos Group
+            menu_choices.append(
+                Choice(  # Item Eos Group
                     title=[
-                        ("class:{}".format("disabled"), "{:{width}}".format("Eos Group", width=col_left_width)),
-                        ("class:value", "{:{width}}".format(item_eos_group["name"], width=col_right_width))
+                        (
+                            "class:{}".format("disabled"),
+                            "{:{width}}".format("Eos Group", width=col_left_width),
+                        ),
+                        (
+                            "class:value",
+                            "{:{width}}".format(
+                                item_eos_group["name"], width=col_right_width
+                            ),
+                        ),
                     ],
                     value="eos_menu_eos_group",
-                    disabled=True
-                ))
+                    disabled=True,
+                )
+            )
         menu_choices.append(Separator(line=" "))
         if eos_lights:
             menu_choices.append(Separator(line="    Eos Lights"))
             for item in eos_lights:
-                if answer == item["name"]: pointed_at = len(menu_choices)
-                menu_choices.append(Choice(
+                if answer == item["name"]:
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(
                         title=[
                             ("class:itemtype", "{}".format(item["type"])),
                             ("class:itemname", " {}".format(item["name"])),
-                            ("class:itemlabel", "{}".format(" \"{}\"".format(item["label"]) if "label" in item else "")),
+                            (
+                                "class:itemlabel",
+                                "{}".format(
+                                    ' "{}"'.format(item["label"])
+                                    if "label" in item
+                                    else ""
+                                ),
+                            ),
                         ],
-                        value=item["name"]
-                    ))
+                        value=item["name"],
+                    )
+                )
             menu_choices.append(Separator(line=" "))
         if eos_groups:
             menu_choices.append(Separator(line="    Eos Groups"))
             for item in eos_groups:
-                if answer == item["name"]: pointed_at = len(menu_choices)
-                menu_choices.append(Choice(
+                if answer == item["name"]:
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(
                         title=[
                             ("class:itemtype", "{}".format(item["type"])),
                             ("class:itemname", " {}".format(item["name"])),
-                            ("class:itemlabel", "{}".format(" \"{}\"".format(item["label"]) if "label" in item else "")),
+                            (
+                                "class:itemlabel",
+                                "{}".format(
+                                    ' "{}"'.format(item["label"])
+                                    if "label" in item
+                                    else ""
+                                ),
+                            ),
                         ],
-                        value=item["name"]
-                    ))
+                        value=item["name"],
+                    )
+                )
             menu_choices.append(Separator(line=" "))
         if other_items:
             menu_choices.append(Separator(line="    Non Eos Items"))
             for item in other_items:
-                if answer == item["name"]: pointed_at = len(menu_choices)
-                menu_choices.append(Choice(
+                if answer == item["name"]:
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(
                         title=[
                             ("class:itemtype", "{}".format(item["type"])),
                             ("class:itemname", " {}".format(item["name"])),
-                            ("class:itemlabel", "{}".format(" \"{}\"".format(item["label"]) if "label" in item else "")),
+                            (
+                                "class:itemlabel",
+                                "{}".format(
+                                    ' "{}"'.format(item["label"])
+                                    if "label" in item
+                                    else ""
+                                ),
+                            ),
                         ],
-                        disabled="not implemented yet" if item["type"] == "Group" else False,        # TODO implement group adding
-                        value=item["name"]
-                    ))
+                        disabled="not implemented yet"
+                        if item["type"] == "Group"
+                        else False,  # TODO implement group adding
+                        value=item["name"],
+                    )
+                )
             menu_choices.append(Separator(line=" "))
         menu_choices.append(Separator(line="    Options"))
-        if answer == "eos_menu_configure": pointed_at = len(menu_choices)
+        if answer == "eos_menu_configure":
+            pointed_at = len(menu_choices)
         menu_choices.append(Choice(title="Configure Group", value="eos_menu_configure"))
-        if answer == "eos_menu_add_existing": pointed_at = len(menu_choices)
-        menu_choices.append(Choice(title="Add an existing light to this group", value="eos_menu_add_existing", disabled="not implemented yet"))
-        if answer == "eos_menu_add_new_light": pointed_at = len(menu_choices)
-        menu_choices.append(Choice(title="Add a new light to this group", value="eos_menu_add_new_light", disabled="not implemented yet"))
-        if answer == "eos_menu_add_new_group": pointed_at = len(menu_choices)
-        menu_choices.append(Choice(title="Add a new Eos group to this group", value="eos_menu_add_new_group", disabled="not implemented yet"))
+        if answer == "eos_menu_add_existing":
+            pointed_at = len(menu_choices)
+        menu_choices.append(
+            Choice(
+                title="Add an existing light to this group",
+                value="eos_menu_add_existing",
+                disabled="not implemented yet",
+            )
+        )
+        if answer == "eos_menu_add_new_light":
+            pointed_at = len(menu_choices)
+        menu_choices.append(
+            Choice(
+                title="Add a new light to this group",
+                value="eos_menu_add_new_light",
+                disabled="not implemented yet",
+            )
+        )
+        if answer == "eos_menu_add_new_group":
+            pointed_at = len(menu_choices)
+        menu_choices.append(
+            Choice(
+                title="Add a new Eos group to this group",
+                value="eos_menu_add_new_group",
+                disabled="not implemented yet",
+            )
+        )
         menu_choices.append(Separator(line=" "))
         if back_group:
-            menu_choices.append(Choice(
+            menu_choices.append(
+                Choice(
                     title=[
                         ("class:text", "Back to '{}'".format(back_group)),
-                        ("class:disabled", "  (ctrl+c)")
+                        ("class:disabled", "  (ctrl+c)"),
                     ],
-                    value="eos_menu_back"
-                ))
-        menu_choices.append(Choice(
+                    value="eos_menu_back",
+                )
+            )
+        menu_choices.append(
+            Choice(
                 title=[
                     ("class:text", "Exit"),
-                    ("class:disabled", "  (ctrl+c)" if not back_group else "")
+                    ("class:disabled", "  (ctrl+c)" if not back_group else ""),
                 ],
-                value="eos_menu_exit"
-            ))
+                value="eos_menu_exit",
+            )
+        )
 
         clear()
-        answer = select(message=menu_message, choices=menu_choices, style=eos_style, qmark="", pointed_at=pointed_at).ask()
+        answer = select(
+            message=menu_message,
+            choices=menu_choices,
+            style=eos_style,
+            qmark="",
+            pointed_at=pointed_at,
+        ).ask()
 
         if not answer:
             # ctrl+c - back or exit
@@ -188,37 +276,53 @@ def menu_navigate(root_group_name, host, back_group=None):
             exit_loop = True
         elif [item for item in eos_lights if item["name"] == answer]:
             # selected a light
-            item = validate_item([item for item in eos_lights if item["name"] == answer][0]["name"], host)
-            item, data = menu_eos(item, build_data(item, host), host, 6, is_light=True) or (None, None)
+            item = validate_item(
+                [item for item in eos_lights if item["name"] == answer][0]["name"], host
+            )
+            item, data = menu_eos(
+                item, build_data(item, host), host, 6, is_light=True
+            ) or (None, None)
             if data:
                 if not save_metadata(item, host, data):
-                    pass                                    # TODO something went wrong
+                    pass  # TODO something went wrong
                 if item.get("editable", False):
                     update_item(item, host)
             del item, data
         elif [item for item in eos_groups if item["name"] == answer]:
             # selected an eos group
-            menu_navigate([item for item in eos_groups if item["name"] == answer][0], host, back_group=root_group["name"])
+            menu_navigate(
+                [item for item in eos_groups if item["name"] == answer][0],
+                host,
+                back_group=root_group["name"],
+            )
         elif [item for item in other_items if item["name"] == answer]:
             # selected a non-eos item
-            item = validate_item([item for item in other_items if item["name"] == answer][0]["name"], host)
-            item, data = menu_eos(item, build_data(item, host),
-                    host, 8 if item["type"] in itemtypesGroup else 6,
-                    is_light=True if item["type"] in itemtypesLight else False,
-                    is_group=True if item["type"] in itemtypesGroup else False
-                ) or (None, None)
+            item = validate_item(
+                [item for item in other_items if item["name"] == answer][0]["name"],
+                host,
+            )
+            item, data = menu_eos(
+                item,
+                build_data(item, host),
+                host,
+                8 if item["type"] in itemtypesGroup else 6,
+                is_light=True if item["type"] in itemtypesLight else False,
+                is_group=True if item["type"] in itemtypesGroup else False,
+            ) or (None, None)
             if data:
                 if not save_metadata(item, host, data):
-                    pass                                    # TODO something went wrong
+                    pass  # TODO something went wrong
                 if item.get("editable", False):
                     update_item(item, host)
             del item, data
         elif answer == "eos_menu_configure":
             # edit Eos metadata
-            item, data = menu_eos(root_group, build_data(root_group, host), host, 8, is_group=True) or (None, None)
+            item, data = menu_eos(
+                root_group, build_data(root_group, host), host, 8, is_group=True
+            ) or (None, None)
             if data:
                 if not save_metadata(item, host, data):
-                    pass                                    # TODO something went wrong
+                    pass  # TODO something went wrong
                 if item.get("editable", False):
                     update_item(item, host)
             del item, data
@@ -237,10 +341,12 @@ def menu_navigate(root_group_name, host, back_group=None):
 
     clear()
 
+
 def save_metadata(item, host, data):
     """
     Saves metadata to openHAB
     """
+
     def purge_empty(d):
         # recursively purge empty dicts and 'None'
         for k in [k for k in d]:
@@ -254,37 +360,48 @@ def save_metadata(item, host, data):
     if item["type"] in itemtypesLight:
         configuration = data["item"]
     else:
-        configuration = [data["raw_groups"][i]["data"] for i in range(len(data["raw_groups"])) if data["raw_groups"][i]["name"] == item["name"]][0]
+        configuration = [
+            data["raw_groups"][i]["data"]
+            for i in range(len(data["raw_groups"]))
+            if data["raw_groups"][i]["name"] == item["name"]
+        ][0]
 
     purge_empty(configuration)
 
     return set_metadata(
-            item["name"], META_NAME_EOS, host,
-            configuration=configuration,
-            value=value,
-            overwrite=True
-        )
+        item["name"],
+        META_NAME_EOS,
+        host,
+        configuration=configuration,
+        value=value,
+        overwrite=True,
+    )
+
 
 def build_data(item, host):
     """
     Builds data structure for the eos menu
     """
+
     def _get_group_data(group):
         """
         Get all group ancestor's data, top level group settings are lowest priority
         """
-        data["raw_groups"].append({"name": group["name"], "data": get_metadata(group["name"], META_NAME_EOS, host).get("config", {})})
+        data["raw_groups"].append(
+            {
+                "name": group["name"],
+                "data": get_metadata(group["name"], META_NAME_EOS, host).get(
+                    "config", {}
+                ),
+            }
+        )
         if get_item_eos_group(group, host):
             _get_group_data(get_item_eos_group(group, host))
 
     clear()
     echo("Loading Data...")
 
-    data = {
-        "item": {},
-        "group": {},
-        "raw_groups": [],
-        "global": get_global_settings()}
+    data = {"item": {}, "group": {}, "raw_groups": [], "global": get_global_settings()}
 
     is_light = item["type"] in itemtypesLight
     is_group = item["type"] in itemtypesGroup
@@ -298,7 +415,6 @@ def build_data(item, host):
 
     if is_group:
         _get_group_data(item)
-
 
     # get enabled option
     data["enabled"] = item_metadata.get("value", True)
@@ -318,11 +434,23 @@ def build_data(item, host):
 
     return data
 
-def menu_eos(item, data, host, depth, light_type=False, is_light=False,
-                is_group=False, is_type=False, scene=None, view_only=False):
+
+def menu_eos(
+    item,
+    data,
+    host,
+    depth,
+    light_type=False,
+    is_light=False,
+    is_group=False,
+    is_type=False,
+    scene=None,
+    view_only=False,
+):
     """
     Edit a Light, Group, Light Type in a Group, or Scene
     """
+
     def data_at_depth(depth):
         # return the dict at the specified depth
         def _validate_key(d, k):
@@ -333,13 +461,17 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
         if depth == 1:
             return _validate_key(data["item"], scene)
         elif depth in [2, 3, 4, 5]:
-            return _validate_key(data_at_depth(depth+5), scene)
+            return _validate_key(data_at_depth(depth + 5), scene)
         elif depth == 6:
             return data["item"]
         elif depth in [7, 9]:
-            return _validate_key(data_at_depth(depth+1), light_type)
+            return _validate_key(data_at_depth(depth + 1), light_type)
         elif depth == 8:
-            return [data["raw_groups"][i]["data"] for i in range(len(data["raw_groups"])) if data["raw_groups"][i]["name"] == item["name"]][0]
+            return [
+                data["raw_groups"][i]["data"]
+                for i in range(len(data["raw_groups"]))
+                if data["raw_groups"][i]["name"] == item["name"]
+            ][0]
         elif depth == 10:
             return data["global"]
 
@@ -363,37 +495,64 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
         # returns true if value will be used to evalute the current scene
         def _get_setting_depth(key):
             for scan_depth in range(depth, 11):
-                if get_scene_setting(scene, light_type, key, data, max_depth=scan_depth, min_depth=scan_depth) is not None:
+                if (
+                    get_scene_setting(
+                        scene,
+                        light_type,
+                        key,
+                        data,
+                        max_depth=scan_depth,
+                        min_depth=scan_depth,
+                    )
+                    is not None
+                ):
                     break
             return scan_depth
 
         property_map = {
-            SCENE_TYPE_ALIAS: [
-                META_KEY_ALIAS_SCENE
-            ],
-            SCENE_TYPE_FIXED: [
-                META_KEY_STATE
-            ],
+            SCENE_TYPE_ALIAS: [META_KEY_ALIAS_SCENE],
+            SCENE_TYPE_FIXED: [META_KEY_STATE],
             SCENE_TYPE_THRESHOLD: [
-                META_KEY_LEVEL_SOURCE, META_KEY_LEVEL_THRESHOLD,
-                META_KEY_STATE_ABOVE, META_KEY_STATE_BELOW
+                META_KEY_LEVEL_SOURCE,
+                META_KEY_LEVEL_THRESHOLD,
+                META_KEY_STATE_ABOVE,
+                META_KEY_STATE_BELOW,
             ],
             SCENE_TYPE_SCALED: [
-                META_KEY_LEVEL_SOURCE, META_KEY_LEVEL_HIGH,
-                META_KEY_LEVEL_LOW, META_KEY_STATE_HIGH, META_KEY_STATE_LOW,
-                META_KEY_STATE_ABOVE, META_KEY_STATE_BELOW
-            ]
+                META_KEY_LEVEL_SOURCE,
+                META_KEY_LEVEL_HIGH,
+                META_KEY_LEVEL_LOW,
+                META_KEY_STATE_HIGH,
+                META_KEY_STATE_LOW,
+                META_KEY_STATE_ABOVE,
+                META_KEY_STATE_BELOW,
+            ],
         }
-        if scene_type != SCENE_TYPE_ALIAS \
-                and key in [META_KEY_MOTION_SOURCE, META_KEY_MOTION_ACTIVE, META_KEY_MOTION_STATE, META_KEY_MOTION_SCENE] \
-                and get_scene_setting(scene, light_type, META_KEY_MOTION_SOURCE, data, min_depth=depth) is not None:
+        if (
+            scene_type != SCENE_TYPE_ALIAS
+            and key
+            in [
+                META_KEY_MOTION_SOURCE,
+                META_KEY_MOTION_ACTIVE,
+                META_KEY_MOTION_STATE,
+                META_KEY_MOTION_SCENE,
+            ]
+            and get_scene_setting(
+                scene, light_type, META_KEY_MOTION_SOURCE, data, min_depth=depth
+            )
+            is not None
+        ):
             if key == META_KEY_MOTION_SCENE:
-                if _get_setting_depth(META_KEY_MOTION_SCENE) <= _get_setting_depth(META_KEY_MOTION_STATE):
+                if _get_setting_depth(META_KEY_MOTION_SCENE) <= _get_setting_depth(
+                    META_KEY_MOTION_STATE
+                ):
                     return True and light_type and scene
                 else:
                     return False
             elif key == META_KEY_MOTION_STATE:
-                if _get_setting_depth(META_KEY_MOTION_STATE) < _get_setting_depth(META_KEY_MOTION_SCENE):
+                if _get_setting_depth(META_KEY_MOTION_STATE) < _get_setting_depth(
+                    META_KEY_MOTION_SCENE
+                ):
                     return True and light_type and scene
                 else:
                     return False
@@ -405,17 +564,20 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
     def get_missing_scene_settings():
         # return a list of keys for required settings missing for this scene
         scene_settings_map = {
-            SCENE_TYPE_FIXED: [
-                META_KEY_STATE
-            ],
+            SCENE_TYPE_FIXED: [META_KEY_STATE],
             SCENE_TYPE_THRESHOLD: [
-                META_KEY_LEVEL_SOURCE, META_KEY_LEVEL_THRESHOLD,
-                META_KEY_STATE_ABOVE, META_KEY_STATE_BELOW
+                META_KEY_LEVEL_SOURCE,
+                META_KEY_LEVEL_THRESHOLD,
+                META_KEY_STATE_ABOVE,
+                META_KEY_STATE_BELOW,
             ],
             SCENE_TYPE_SCALED: [
-                META_KEY_LEVEL_SOURCE, META_KEY_LEVEL_HIGH,
-                META_KEY_LEVEL_LOW, META_KEY_STATE_HIGH, META_KEY_STATE_LOW
-            ]
+                META_KEY_LEVEL_SOURCE,
+                META_KEY_LEVEL_HIGH,
+                META_KEY_LEVEL_LOW,
+                META_KEY_STATE_HIGH,
+                META_KEY_STATE_LOW,
+            ],
         }
         missing = []
         for key in scene_settings_map.get(scene_type, {}):
@@ -424,23 +586,34 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
         if META_KEY_MOTION_SOURCE in settings_added:
             if META_KEY_MOTION_ACTIVE not in settings_added:
                 missing.append(META_KEY_MOTION_ACTIVE)
-            if META_KEY_MOTION_STATE not in settings_added and META_KEY_MOTION_SCENE not in settings_added:
+            if (
+                META_KEY_MOTION_STATE not in settings_added
+                and META_KEY_MOTION_SCENE not in settings_added
+            ):
                 missing.append(META_KEY_MOTION_STATE)
                 missing.append(META_KEY_MOTION_SCENE)
         return missing
 
-    if not item: return
-    if not (is_light or is_group or is_type or scene): return
+    if not item:
+        return
+    if not (is_light or is_group or is_type or scene):
+        return
 
-    if not view_only: # don't waste memory if we won't be editing
+    if not view_only:  # don't waste memory if we won't be editing
         item = copy.deepcopy(item)
         data = copy.deepcopy(data)
     light_type = light_type or data.get("light_type", None)
 
     menu_message = "Eos Editor > {} {}".format(
-            "View" if view_only else "Edit",
-            "Light" if is_light else "Group" if is_group else "Light Type" if is_type else "Scene"
-        )
+        "View" if view_only else "Edit",
+        "Light"
+        if is_light
+        else "Group"
+        if is_group
+        else "Light Type"
+        if is_type
+        else "Scene",
+    )
     save = False
     answer = None
     pointed_at = None
@@ -450,159 +623,362 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
         echo("Building Menu...")
 
         item_eos_group = get_item_eos_group(item, host)
-        scene_type = get_scene_type(scene, light_type, data) if scene and depth==1 else "unknown"
+        scene_type = (
+            get_scene_type(scene, light_type, data)
+            if scene and depth == 1
+            else "unknown"
+        )
         build_group_data()
 
         menu_choices = []
         menu_choices.append(Separator(line=" "))
-        menu_choices.append(Choice(     # Title Item
+        menu_choices.append(
+            Choice(  # Title Item
                 title=[
                     ("class:titletype", "{}".format(item["type"])),
                     ("class:titlename", " {}".format(item["name"])),
-                    ("class:titlelabel", "{}".format(" \"{}\"".format(item["label"]) if "label" in item else ""))
+                    (
+                        "class:titlelabel",
+                        "{}".format(
+                            ' "{}"'.format(item["label"]) if "label" in item else ""
+                        ),
+                    ),
                 ],
-                disabled=True
-            ))
+                disabled=True,
+            )
+        )
         if item_eos_group:
-            if answer == "eos_menu_eos_group": pointed_at = len(menu_choices)
-            menu_choices.append(Choice(     # Item Eos Group
+            if answer == "eos_menu_eos_group":
+                pointed_at = len(menu_choices)
+            menu_choices.append(
+                Choice(  # Item Eos Group
                     title=[
-                        ("class:{}".format("disabled" if view_only or not item.get("editable", False) else "text"),
-                            "{:{width}}".format("Eos Group", width=col_left_width)),
-                        ("class:value", "{:{width}}".format(item_eos_group["name"], width=col_right_width))
+                        (
+                            "class:{}".format(
+                                "disabled"
+                                if view_only or not item.get("editable", False)
+                                else "text"
+                            ),
+                            "{:{width}}".format("Eos Group", width=col_left_width),
+                        ),
+                        (
+                            "class:value",
+                            "{:{width}}".format(
+                                item_eos_group["name"], width=col_right_width
+                            ),
+                        ),
                     ],
                     value="eos_menu_eos_group",
-                    disabled=not item.get("editable", False)
-                ))
+                    disabled=not item.get("editable", False),
+                )
+            )
         if light_type:
-            menu_choices.append(Choice(     # Light Type
+            menu_choices.append(
+                Choice(  # Light Type
                     title=[
-                        ("class:disabled", "{:{width}}".format("Eos Light Type", width=col_left_width)),
-                        ("class:value", "{:{width}}".format(light_type.capitalize(), width=col_right_width))
+                        (
+                            "class:disabled",
+                            "{:{width}}".format("Eos Light Type", width=col_left_width),
+                        ),
+                        (
+                            "class:value",
+                            "{:{width}}".format(
+                                light_type.capitalize(), width=col_right_width
+                            ),
+                        ),
                     ],
                     value="eos_menu_light_type",
-                    disabled=True
-                ))
+                    disabled=True,
+                )
+            )
         menu_choices.append(Separator(line=" "))
         if scene:
-            if answer == "eos_menu_edit_scene_name": pointed_at = len(menu_choices)
-            menu_choices.append(Choice(     # Scene Name
+            if answer == "eos_menu_edit_scene_name":
+                pointed_at = len(menu_choices)
+            menu_choices.append(
+                Choice(  # Scene Name
                     title=[
-                        ("class:{}".format("disabled" if view_only else "text"),
-                            "{:{width}}".format("Scene Name", width=col_left_width)),
-                        ("class:value", "{:{width}}".format(scene, width=col_right_width))
+                        (
+                            "class:{}".format("disabled" if view_only else "text"),
+                            "{:{width}}".format("Scene Name", width=col_left_width),
+                        ),
+                        (
+                            "class:value",
+                            "{:{width}}".format(scene, width=col_right_width),
+                        ),
                     ],
                     value="eos_menu_edit_scene_name",
-                    disabled=view_only
-                ))
-            menu_choices.append(Choice(     # Scene Type
+                    disabled=view_only,
+                )
+            )
+            menu_choices.append(
+                Choice(  # Scene Type
                     title=[
-                        ("class:disabled", "{:{width}}".format("Scene Type", width=col_left_width)),
-                        ("class:value", "{:{width}}".format(scene_type.capitalize(), width=col_right_width))
+                        (
+                            "class:disabled",
+                            "{:{width}}".format("Scene Type", width=col_left_width),
+                        ),
+                        (
+                            "class:value",
+                            "{:{width}}".format(
+                                scene_type.capitalize(), width=col_right_width
+                            ),
+                        ),
                     ],
                     value="eos_menu_scene_type",
-                    disabled=True
-                ))
+                    disabled=True,
+                )
+            )
             menu_choices.append(Separator(line=" "))
         if is_light or is_group:
             menu_choices.append(Separator(line="    Options"))
-            if answer == "eos_menu_enabled": pointed_at = len(menu_choices)
-            menu_choices.append(Choice(     # Item Enabled
+            if answer == "eos_menu_enabled":
+                pointed_at = len(menu_choices)
+            menu_choices.append(
+                Choice(  # Item Enabled
                     title=[
-                        ("class:text", "{:{width}}".format("Enabled", width=col_left_width)),
-                        ("class:value", "{:{width}}".format(str(data["enabled"]), width=col_right_width))
+                        (
+                            "class:text",
+                            "{:{width}}".format("Enabled", width=col_left_width),
+                        ),
+                        (
+                            "class:value",
+                            "{:{width}}".format(
+                                str(data["enabled"]), width=col_right_width
+                            ),
+                        ),
                     ],
-                    value="eos_menu_enabled"
-                ))
+                    value="eos_menu_enabled",
+                )
+            )
             if is_group:
-                if answer == "eos_menu_follow_parent": pointed_at = len(menu_choices)
-                menu_choices.append(Choice(     # Group Follow Parent
+                if answer == "eos_menu_follow_parent":
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(  # Group Follow Parent
                         title=[
-                            ("class:text", "{:{width}}".format("Follow Parent", width=col_left_width)),
-                            ("class:value", "{:{width}}".format(str(data.get("follow_parent", True)), width=col_right_width))
+                            (
+                                "class:text",
+                                "{:{width}}".format(
+                                    "Follow Parent", width=col_left_width
+                                ),
+                            ),
+                            (
+                                "class:value",
+                                "{:{width}}".format(
+                                    str(data.get("follow_parent", True)),
+                                    width=col_right_width,
+                                ),
+                            ),
                         ],
-                        value="eos_menu_follow_parent"
-                    ))
+                        value="eos_menu_follow_parent",
+                    )
+                )
             menu_choices.append(Separator(line=" "))
         if is_group:
             menu_choices.append(Separator(line="    Light Types"))
             for key in LIGHT_TYPE_LIST:
-                if answer == "eos_menu_light_type_{}".format(key): pointed_at = len(menu_choices)
-                menu_choices.append(Choice(     # Light Types
-                        title=[
-                            ("class:text", key.capitalize())
-                        ],
-                        value="eos_menu_light_type_{}".format(key)
-                    ))
+                if answer == "eos_menu_light_type_{}".format(key):
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(  # Light Types
+                        title=[("class:text", key.capitalize())],
+                        value="eos_menu_light_type_{}".format(key),
+                    )
+                )
             menu_choices.append(Separator(line=" "))
         if not scene:
             menu_choices.append(Separator(line="    Scenes"))
             scenes_added = []
             if is_light:
-                for key in sorted([key for key in data["item"] if isinstance(data["item"][key], dict)]):
+                for key in sorted(
+                    [key for key in data["item"] if isinstance(data["item"][key], dict)]
+                ):
                     scenes_added.append(key)
-                    if answer == "eos_menu_scene_{}".format(key): pointed_at = len(menu_choices)
-                    menu_choices.append(Choice(     # Item Scenes
+                    if answer == "eos_menu_scene_{}".format(key):
+                        pointed_at = len(menu_choices)
+                    menu_choices.append(
+                        Choice(  # Item Scenes
                             title=[
-                                ("class:text", "{:{width}}".format(key, width=col_left_width)),
-                                ("class:value", "{:{width}}".format(str(get_scene_type(key, light_type, data)).capitalize(), width=col_right_width)),
+                                (
+                                    "class:text",
+                                    "{:{width}}".format(key, width=col_left_width),
+                                ),
+                                (
+                                    "class:value",
+                                    "{:{width}}".format(
+                                        str(
+                                            get_scene_type(key, light_type, data)
+                                        ).capitalize(),
+                                        width=col_right_width,
+                                    ),
+                                ),
                                 ("class:disabled", " item"),
                             ],
-                            value="eos_menu_scene_{}".format(key)
-                        ))
-            for key in sorted([key for key in data["group"].get(light_type, {}) if isinstance(data["group"][light_type][key], dict) and key not in scenes_added]):
+                            value="eos_menu_scene_{}".format(key),
+                        )
+                    )
+            for key in sorted(
+                [
+                    key
+                    for key in data["group"].get(light_type, {})
+                    if isinstance(data["group"][light_type][key], dict)
+                    and key not in scenes_added
+                ]
+            ):
                 scenes_added.append(key)
-                if answer == "eos_menu_scene_{}".format(key): pointed_at = len(menu_choices)
-                menu_choices.append(Choice(     # Light Type Scenes in Group
+                if answer == "eos_menu_scene_{}".format(key):
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(  # Light Type Scenes in Group
                         title=[
-                            ("class:text", "{:{width}}".format(key, width=col_left_width)),
-                            ("class:value", "{:{width}}".format(
-                                str(get_scene_type(key, light_type, data)).capitalize() if is_light else "", width=col_right_width)),
-                            ("class:disabled", " group-type {}".format(get_source_group(None, light_type, key, item["name"], data))),
+                            (
+                                "class:text",
+                                "{:{width}}".format(key, width=col_left_width),
+                            ),
+                            (
+                                "class:value",
+                                "{:{width}}".format(
+                                    str(
+                                        get_scene_type(key, light_type, data)
+                                    ).capitalize()
+                                    if is_light
+                                    else "",
+                                    width=col_right_width,
+                                ),
+                            ),
+                            (
+                                "class:disabled",
+                                " group-type {}".format(
+                                    get_source_group(
+                                        None, light_type, key, item["name"], data
+                                    )
+                                ),
+                            ),
                         ],
-                        value="eos_menu_scene_{}".format(key)
-                    ))
-            for key in sorted([key for key in data["group"] if isinstance(data["group"][key], dict) and key not in LIGHT_TYPE_LIST and key not in scenes_added]):
+                        value="eos_menu_scene_{}".format(key),
+                    )
+                )
+            for key in sorted(
+                [
+                    key
+                    for key in data["group"]
+                    if isinstance(data["group"][key], dict)
+                    and key not in LIGHT_TYPE_LIST
+                    and key not in scenes_added
+                ]
+            ):
                 scenes_added.append(key)
-                if answer == "eos_menu_scene_{}".format(key): pointed_at = len(menu_choices)
-                menu_choices.append(Choice(     # Group Scenes
+                if answer == "eos_menu_scene_{}".format(key):
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(  # Group Scenes
                         title=[
-                            ("class:text", "{:{width}}".format(key, width=col_left_width)),
-                            ("class:value", "{:{width}}".format(
-                                str(get_scene_type(key, light_type, data)).capitalize() if is_light else "", width=col_right_width)),
-                            ("class:disabled", " group {}".format(get_source_group(None, None, key, item["name"], data))),
+                            (
+                                "class:text",
+                                "{:{width}}".format(key, width=col_left_width),
+                            ),
+                            (
+                                "class:value",
+                                "{:{width}}".format(
+                                    str(
+                                        get_scene_type(key, light_type, data)
+                                    ).capitalize()
+                                    if is_light
+                                    else "",
+                                    width=col_right_width,
+                                ),
+                            ),
+                            (
+                                "class:disabled",
+                                " group {}".format(
+                                    get_source_group(
+                                        None, None, key, item["name"], data
+                                    )
+                                ),
+                            ),
                         ],
-                        value="eos_menu_scene_{}".format(key)
-                    ))
-            for key in sorted([key for key in data["global"].get(light_type, {}) if isinstance(data["global"][light_type][key], dict) and key not in scenes_added]):
+                        value="eos_menu_scene_{}".format(key),
+                    )
+                )
+            for key in sorted(
+                [
+                    key
+                    for key in data["global"].get(light_type, {})
+                    if isinstance(data["global"][light_type][key], dict)
+                    and key not in scenes_added
+                ]
+            ):
                 scenes_added.append(key)
-                if answer == "eos_menu_scene_{}".format(key): pointed_at = len(menu_choices)
-                menu_choices.append(Choice(     # Light Type Scenes in Global
+                if answer == "eos_menu_scene_{}".format(key):
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(  # Light Type Scenes in Global
                         title=[
-                            ("class:text", "{:{width}}".format(key, width=col_left_width)),
-                            ("class:value", "{:{width}}".format(
-                                str(get_scene_type(key, light_type, data)).capitalize() if is_light else "", width=col_right_width)),
+                            (
+                                "class:text",
+                                "{:{width}}".format(key, width=col_left_width),
+                            ),
+                            (
+                                "class:value",
+                                "{:{width}}".format(
+                                    str(
+                                        get_scene_type(key, light_type, data)
+                                    ).capitalize()
+                                    if is_light
+                                    else "",
+                                    width=col_right_width,
+                                ),
+                            ),
                             ("class:disabled", " global-type"),
                         ],
-                        value="eos_menu_scene_{}".format(key)
-                    ))
-            for key in sorted([key for key in data["global"] if isinstance(data["global"][key], dict) and key not in LIGHT_TYPE_LIST and key not in scenes_added]):
+                        value="eos_menu_scene_{}".format(key),
+                    )
+                )
+            for key in sorted(
+                [
+                    key
+                    for key in data["global"]
+                    if isinstance(data["global"][key], dict)
+                    and key not in LIGHT_TYPE_LIST
+                    and key not in scenes_added
+                ]
+            ):
                 scenes_added.append(key)
-                if answer == "eos_menu_scene_{}".format(key): pointed_at = len(menu_choices)
-                menu_choices.append(Choice(     # Global Scenes
+                if answer == "eos_menu_scene_{}".format(key):
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(  # Global Scenes
                         title=[
-                            ("class:text", "{:{width}}".format(key, width=col_left_width)),
-                            ("class:value", "{:{width}}".format(
-                                str(get_scene_type(key, light_type, data)).capitalize() if is_light else "", width=col_right_width)),
+                            (
+                                "class:text",
+                                "{:{width}}".format(key, width=col_left_width),
+                            ),
+                            (
+                                "class:value",
+                                "{:{width}}".format(
+                                    str(
+                                        get_scene_type(key, light_type, data)
+                                    ).capitalize()
+                                    if is_light
+                                    else "",
+                                    width=col_right_width,
+                                ),
+                            ),
                             ("class:disabled", " global"),
                         ],
-                        value="eos_menu_scene_{}".format(key)
-                    ))
+                        value="eos_menu_scene_{}".format(key),
+                    )
+                )
             del scenes_added
             if is_light:
-                if answer == "eos_menu_test_scene": pointed_at = len(menu_choices)
-                menu_choices.append(Choice(title="Test Scene", value="eos_menu_test_scene"))
-            if answer == "eos_menu_add_scene": pointed_at = len(menu_choices)
+                if answer == "eos_menu_test_scene":
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(title="Test Scene", value="eos_menu_test_scene")
+                )
+            if answer == "eos_menu_add_scene":
+                pointed_at = len(menu_choices)
             menu_choices.append(Choice(title="Add", value="eos_menu_add_scene"))
         menu_choices.append(Separator(line=" "))
         menu_choices.append(Separator(line="    Settings"))
@@ -610,55 +986,123 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
         for scan_depth in range(depth, 11):
             for key in META_KEY_LIST:
                 if key not in settings_added:
-                    value = get_scene_setting(scene, light_type, key, data, max_depth=scan_depth, min_depth=scan_depth)
+                    value = get_scene_setting(
+                        scene,
+                        light_type,
+                        key,
+                        data,
+                        max_depth=scan_depth,
+                        min_depth=scan_depth,
+                    )
                     if value is not None:
                         settings_added.append(key)
-                        if answer == "eos_menu_setting_{}".format(key): pointed_at = len(menu_choices)
-                        menu_choices.append(Choice(     # Settings
+                        if answer == "eos_menu_setting_{}".format(key):
+                            pointed_at = len(menu_choices)
+                        menu_choices.append(
+                            Choice(  # Settings
                                 title=[
-                                    ("class:{}".format("disabled" if view_only else "text"),
-                                        "{:{width}}".format(key, width=col_left_width)),
-                                    ("class:{}".format("valueapplies" if value_applies(key) else "value"),
-                                        "{:{width}} ".format("\"{}\"".format(value) if isinstance(value, str) else str(value),
-                                        width=col_right_width)),
-                                    ("class:disabled", "{} {}".format(DEPTH_NAME_MAP[scan_depth],
-                                        get_source_group(key, light_type, scene, item["name"], data) if scan_depth in [2,3,7,8] else "")),
+                                    (
+                                        "class:{}".format(
+                                            "disabled" if view_only else "text"
+                                        ),
+                                        "{:{width}}".format(key, width=col_left_width),
+                                    ),
+                                    (
+                                        "class:{}".format(
+                                            "valueapplies"
+                                            if value_applies(key)
+                                            else "value"
+                                        ),
+                                        "{:{width}} ".format(
+                                            '"{}"'.format(value)
+                                            if isinstance(value, str)
+                                            else str(value),
+                                            width=col_right_width,
+                                        ),
+                                    ),
+                                    (
+                                        "class:disabled",
+                                        "{} {}".format(
+                                            DEPTH_NAME_MAP[scan_depth],
+                                            get_source_group(
+                                                key,
+                                                light_type,
+                                                scene,
+                                                item["name"],
+                                                data,
+                                            )
+                                            if scan_depth in [2, 3, 7, 8]
+                                            else "",
+                                        ),
+                                    ),
                                 ],
                                 value="eos_menu_setting_{}".format(key),
-                                disabled=view_only
-                            ))
+                                disabled=view_only,
+                            )
+                        )
         if scene and depth == 1:
             for key in get_missing_scene_settings():
-                if answer == "eos_menu_setting_{}".format(key): pointed_at = len(menu_choices)
-                menu_choices.append(Choice(     # Missing Settings
+                if answer == "eos_menu_setting_{}".format(key):
+                    pointed_at = len(menu_choices)
+                menu_choices.append(
+                    Choice(  # Missing Settings
                         title=[
-                            ("class:{}".format("disabled" if view_only else "text"),
-                                "{:{width}}".format(key, width=col_left_width)),
-                            ("class:valuerequired", "REQUIRED")
+                            (
+                                "class:{}".format("disabled" if view_only else "text"),
+                                "{:{width}}".format(key, width=col_left_width),
+                            ),
+                            ("class:valuerequired", "REQUIRED"),
                         ],
                         value="eos_menu_setting_{}".format(key),
-                        disabled=view_only
-                    ))
+                        disabled=view_only,
+                    )
+                )
         del settings_added
         if not view_only:
-            if answer == "eos_menu_add_setting": pointed_at = len(menu_choices)
+            if answer == "eos_menu_add_setting":
+                pointed_at = len(menu_choices)
             menu_choices.append(Choice(title="Add", value="eos_menu_add_setting"))
         menu_choices.append(Separator(line=" "))
         if not view_only:
-            menu_choices.append(Choice(title="Save" if (is_light or is_group) else "Apply", value="eos_menu_save"))
-        if scene and scene in data_at_depth(depth+5) and not view_only:
-            if answer == "eos_menu_remove_scene": pointed_at = len(menu_choices)
-            menu_choices.append(Choice(title="Remove scene from {}".format("Light" if depth==1 else "Light Type" if depth==2 else "Group"), value="eos_menu_remove_scene"))
-        menu_choices.append(Choice(
+            menu_choices.append(
+                Choice(
+                    title="Save" if (is_light or is_group) else "Apply",
+                    value="eos_menu_save",
+                )
+            )
+        if scene and scene in data_at_depth(depth + 5) and not view_only:
+            if answer == "eos_menu_remove_scene":
+                pointed_at = len(menu_choices)
+            menu_choices.append(
+                Choice(
+                    title="Remove scene from {}".format(
+                        "Light"
+                        if depth == 1
+                        else "Light Type"
+                        if depth == 2
+                        else "Group"
+                    ),
+                    value="eos_menu_remove_scene",
+                )
+            )
+        menu_choices.append(
+            Choice(
                 title=[
                     ("class:text", "Done" if view_only else "Cancel"),
-                    ("class:disabled", "  (ctrl+c)")
+                    ("class:disabled", "  (ctrl+c)"),
                 ],
-                value="eos_menu_cancel"
-            ))
+                value="eos_menu_cancel",
+            )
+        )
 
         clear()
-        answer = select(message=menu_message, choices=menu_choices, style=eos_style, qmark="", pointed_at=pointed_at).ask()
+        answer = select(
+            message=menu_message,
+            choices=menu_choices,
+            style=eos_style,
+            qmark="",
+            pointed_at=pointed_at,
+        ).ask()
 
         if not answer or answer == "eos_menu_cancel":
             # ctrl+c, or "Cancel"
@@ -675,8 +1119,11 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
             # edit scene name
             new_scene = prompt_text("Enter a new scene name:", default=scene)
             if new_scene and new_scene.lower() != scene:
-                data_at_depth(depth+5)[new_scene] = data_at_depth(depth+5).get(scene, {})
-                if scene in data_at_depth(depth+5): del data_at_depth(depth+5)[scene]
+                data_at_depth(depth + 5)[new_scene] = data_at_depth(depth + 5).get(
+                    scene, {}
+                )
+                if scene in data_at_depth(depth + 5):
+                    del data_at_depth(depth + 5)[scene]
                 scene = new_scene
             del new_scene
         elif answer == "eos_menu_enabled":
@@ -685,51 +1132,82 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
         elif answer == "eos_menu_follow_parent":
             # toggle follow parent
             data["follow_parent"] = not data.get("follow_parent", True)
-        elif answer[:len("eos_menu_light_type_")] == "eos_menu_light_type_":
+        elif answer[: len("eos_menu_light_type_")] == "eos_menu_light_type_":
             # edit data for light type
-            item, data = menu_eos(item, data, host, 7,
-                    light_type=answer[len("eos_menu_light_type_"):],
-                    is_type=True
-                ) or (item, data)
-        elif answer[:len("eos_menu_scene_")] == "eos_menu_scene_":
+            item, data = menu_eos(
+                item,
+                data,
+                host,
+                7,
+                light_type=answer[len("eos_menu_light_type_") :],
+                is_type=True,
+            ) or (item, data)
+        elif answer[: len("eos_menu_scene_")] == "eos_menu_scene_":
             # edit scene
-            item, data = menu_eos(item, data, host,
-                    get_scene_depth_for_type(),
-                    light_type=light_type,
-                    scene=answer[len("eos_menu_scene_"):]
-                ) or (item, data)
+            item, data = menu_eos(
+                item,
+                data,
+                host,
+                get_scene_depth_for_type(),
+                light_type=light_type,
+                scene=answer[len("eos_menu_scene_") :],
+            ) or (item, data)
         elif answer == "eos_menu_test_scene":
             # evaluate a scene to see the options that will be used
-            menu_eos(item, data, host, 1, light_type=light_type,
-                    scene=prompt_scene_name("Enter the name of a scene to evaluate:"),
-                    view_only=True
-                )
+            menu_eos(
+                item,
+                data,
+                host,
+                1,
+                light_type=light_type,
+                scene=prompt_scene_name("Enter the name of a scene to evaluate:"),
+                view_only=True,
+            )
         elif answer == "eos_menu_add_scene":
             # add a new scene
             new_scene = prompt_scene_name("Enter a name for the new scene:")
             if new_scene:
-                item, data = menu_eos(item, data, host, get_scene_depth_for_type(),
-                        light_type=light_type, scene=new_scene
-                    ) or (item, data)
+                item, data = menu_eos(
+                    item,
+                    data,
+                    host,
+                    get_scene_depth_for_type(),
+                    light_type=light_type,
+                    scene=new_scene,
+                ) or (item, data)
             del new_scene
-        elif answer[:len("eos_menu_setting_")] == "eos_menu_setting_":
+        elif answer[: len("eos_menu_setting_")] == "eos_menu_setting_":
             # edit existing setting or add one to item if defined at group or type level
             new_value = prompt_edit_setting(
-                    "Enter a new value for {}:".format(answer[len("eos_menu_setting_"):]),
-                    answer[len("eos_menu_setting_"):], host,
-                    default=get_scene_setting(scene, light_type, answer[len("eos_menu_setting_"):], data, min_depth=depth)
-                )
+                "Enter a new value for {}:".format(answer[len("eos_menu_setting_") :]),
+                answer[len("eos_menu_setting_") :],
+                host,
+                default=get_scene_setting(
+                    scene,
+                    light_type,
+                    answer[len("eos_menu_setting_") :],
+                    data,
+                    min_depth=depth,
+                ),
+            )
             if new_value is None:
-                if answer[len("eos_menu_setting_"):] in data_at_depth(depth):
-                    data_at_depth(depth).pop(answer[len("eos_menu_setting_"):], None)
+                if answer[len("eos_menu_setting_") :] in data_at_depth(depth):
+                    data_at_depth(depth).pop(answer[len("eos_menu_setting_") :], None)
             else:
-                data_at_depth(depth)[answer[len("eos_menu_setting_"):]] = new_value
+                data_at_depth(depth)[answer[len("eos_menu_setting_") :]] = new_value
             del new_value
         elif answer == "eos_menu_add_setting":
             # add a new setting to this item
-            new_key = prompt_select_setting(depth, keys_to_hide=[key for key in data_at_depth(depth) if key in META_KEY_LIST])
+            new_key = prompt_select_setting(
+                depth,
+                keys_to_hide=[
+                    key for key in data_at_depth(depth) if key in META_KEY_LIST
+                ],
+            )
             if new_key in META_KEY_LIST:
-                new_value = prompt_edit_setting("Enter a new value for {}:".format(new_key), new_key, host)
+                new_value = prompt_edit_setting(
+                    "Enter a new value for {}:".format(new_key), new_key, host
+                )
                 if new_value is not None:
                     data_at_depth(depth)[new_key] = new_value
                     answer = "eos_menu_setting_{}".format(new_key)
@@ -743,10 +1221,11 @@ def menu_eos(item, data, host, depth, light_type=False, is_light=False,
             # remove scene
             save = True
             exit_loop = True
-            data_at_depth(depth+5).pop(scene, None)
+            data_at_depth(depth + 5).pop(scene, None)
 
     clear()
     return (item, data) if save else False
+
 
 def prompt_text(message, pre_lines=[], default=""):
     """
@@ -754,20 +1233,25 @@ def prompt_text(message, pre_lines=[], default=""):
     """
     default = str(default) if default is not None else ""
     clear()
-    for line in pre_lines: echo(line)
+    for line in pre_lines:
+        echo(line)
     return text(message=message, default=default, style=eos_style, qmark="").ask()
+
 
 def prompt_select_group(item, host):
     """
     Prompt to select an Eos group
     """
+
     def search_group(target_group, depth=0):
         # recursive Eos group finder
         results = []
         for group in get_group_items(target_group):
             results.append(group)
-            results[len(results)-1]["name"] = "{}{name}".format("  " * depth, name=results[len(results)-1]["name"])
-            results.extend(search_group(group), depth+1)
+            results[len(results) - 1]["name"] = "{}{name}".format(
+                "  " * depth, name=results[len(results) - 1]["name"]
+            )
+            results.extend(search_group(group), depth + 1)
         return results
 
     eos_groups = [validate_item(get_conf_value("eos_master_group"), host)]
@@ -778,28 +1262,50 @@ def prompt_select_group(item, host):
     pointed_at = None
     menu_choices = []
     menu_choices.append(Separator(line=" "))
-    menu_choices.append(Choice(
+    menu_choices.append(
+        Choice(
             title=[
                 ("class:titletype", "{}".format(item["type"])),
                 ("class:titlename", " {}".format(item["name"])),
-                ("class:titlelabel", "{}".format(" \"{}\"".format(item["label"]) if "label" in item else ""))
+                (
+                    "class:titlelabel",
+                    "{}".format(
+                        ' "{}"'.format(item["label"]) if "label" in item else ""
+                    ),
+                ),
             ],
-            disabled=True
-        ))
+            disabled=True,
+        )
+    )
     menu_choices.append(Separator(line=" "))
     for group in eos_groups:
-        if group["name"] == item_group: pointed_at = len(menu_choices)
-        menu_choices.append(Choice(
+        if group["name"] == item_group:
+            pointed_at = len(menu_choices)
+        menu_choices.append(
+            Choice(
                 title=[
                     ("class:itemtype", "{}".format(group["type"])),
                     ("class:itemname", " {}".format(group["name"])),
-                    ("class:itemlabel", "{}".format(" \"{}\"".format(group["label"]) if "label" in group else "")),
+                    (
+                        "class:itemlabel",
+                        "{}".format(
+                            ' "{}"'.format(group["label"]) if "label" in group else ""
+                        ),
+                    ),
                 ],
-                value=group["name"].strip()
-            ))
+                value=group["name"].strip(),
+            )
+        )
 
     clear()
-    return select(message=menu_message, choices=menu_choices, style=eos_style, qmark="", pointed_at=pointed_at).ask()
+    return select(
+        message=menu_message,
+        choices=menu_choices,
+        style=eos_style,
+        qmark="",
+        pointed_at=pointed_at,
+    ).ask()
+
 
 def prompt_scene_name(message, instructions=[], default=""):
     """
@@ -807,15 +1313,34 @@ def prompt_scene_name(message, instructions=[], default=""):
     """
     err_msg = None
     while True:
-        answer = prompt_text(message, pre_lines=[err_msg]+instructions, default=default)
+        answer = prompt_text(
+            message, pre_lines=[err_msg] + instructions, default=default
+        )
         if answer:
-            if answer.lower() in ["parent", "manual", "enabled", "follow_parent", "light_type", "true", "false", "none"]+META_KEY_LIST:
-                err_msg = ("class:pointer", "Reserved keywords cannot be used for scene names!")
+            if (
+                answer.lower()
+                in [
+                    "parent",
+                    "manual",
+                    "enabled",
+                    "follow_parent",
+                    "light_type",
+                    "true",
+                    "false",
+                    "none",
+                ]
+                + META_KEY_LIST
+            ):
+                err_msg = (
+                    "class:pointer",
+                    "Reserved keywords cannot be used for scene names!",
+                )
                 default = answer
             else:
                 return answer
         else:
             return None
+
 
 def prompt_select_setting(depth, keys_to_hide=[]):
     """
@@ -824,11 +1349,13 @@ def prompt_select_setting(depth, keys_to_hide=[]):
     menu_message = "Eos Editor > Select Setting"
     menu_choices = []
     menu_choices.append(Separator(line=" "))
-    menu_choices.append(Choice(
+    menu_choices.append(
+        Choice(
             title=[("class:text", "Select setting to add:")],
             value="eos_menu_message",
-            disabled=True
-        ))
+            disabled=True,
+        )
+    )
     menu_choices.append(Separator(line=" "))
     for key in META_KEY_LIST:
         if key not in keys_to_hide and depth in META_KEY_DEPTH_MAP[key]:
@@ -837,48 +1364,62 @@ def prompt_select_setting(depth, keys_to_hide=[]):
     menu_choices.append(Choice(title="Cancel", value="eos_menu_cancel"))
 
     clear()
-    return select(message=menu_message, choices=menu_choices, style=eos_style, qmark="").ask()
+    return select(
+        message=menu_message, choices=menu_choices, style=eos_style, qmark=""
+    ).ask()
+
 
 def prompt_edit_setting(message, key, host, instructions=[], default=""):
     """
     Prompt for new setting value
     """
-    if key is None: return default
+    if key is None:
+        return default
     leave_blank = ["Leave blank to remove this setting"]
     valid = False
     err_msg = None
     while not valid:
         clear()
 
-        answer = prompt_text(message, pre_lines=[err_msg]+instructions+leave_blank, default=default)
+        answer = prompt_text(
+            message, pre_lines=[err_msg] + instructions + leave_blank, default=default
+        )
 
         if answer is None or answer == "":
             answer = None
             valid = True
         elif key in [META_KEY_LEVEL_SOURCE, META_KEY_MOTION_SOURCE]:
             valid = True if validate_item(answer, host) else False
-            if not valid: err_msg = "Value of {key} must be an item that exists!".format(key=key)
+            if not valid:
+                err_msg = "Value of {key} must be an item that exists!".format(key=key)
         elif key in [META_KEY_LEVEL_HIGH, META_KEY_LEVEL_LOW, META_KEY_LEVEL_THRESHOLD]:
             answer = resolve_type(answer)
             valid = True if isinstance(answer, (int, float)) else False
-            if not valid: err_msg = "Value of {key} must be a number!".format(key=key)
+            if not valid:
+                err_msg = "Value of {key} must be a number!".format(key=key)
         elif len(str(answer).split(",")) == 3:
             # list for color state
-            hsb = [resolve_type(part.strip()) for part in str(answer).split(",") if isinstance(resolve_type(part.strip()), (int, float))]
-            valid = True if len(hsb)==3 else False
-            if not valid: err_msg = "HSB states must be 3 numbers"
+            hsb = [
+                resolve_type(part.strip())
+                for part in str(answer).split(",")
+                if isinstance(resolve_type(part.strip()), (int, float))
+            ]
+            valid = True if len(hsb) == 3 else False
+            if not valid:
+                err_msg = "HSB states must be 3 numbers"
         else:
             valid = True
         # TODO keys that still need validation:
-            # META_KEY_STATE = "state"
-            # META_KEY_STATE_ABOVE = "state_above"
-            # META_KEY_STATE_BELOW = "state_below"
-            # META_KEY_STATE_HIGH = "state_high"
-            # META_KEY_STATE_LOW = "state_low"
-            # META_KEY_MOTION_ACTIVE = "motion_active"
-            # META_KEY_MOTION_STATE = "motion_state"
-            # META_KEY_MOTION_SCENE = "motion_scene"
+        # META_KEY_STATE = "state"
+        # META_KEY_STATE_ABOVE = "state_above"
+        # META_KEY_STATE_BELOW = "state_below"
+        # META_KEY_STATE_HIGH = "state_high"
+        # META_KEY_STATE_LOW = "state_low"
+        # META_KEY_MOTION_ACTIVE = "motion_active"
+        # META_KEY_MOTION_STATE = "motion_state"
+        # META_KEY_MOTION_SCENE = "motion_scene"
 
-        if not valid: default = answer
+        if not valid:
+            default = answer
 
     return answer

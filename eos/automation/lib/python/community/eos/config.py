@@ -29,7 +29,7 @@ from community.eos import constants
 
 import sys, copy, collections
 
-__all__ = [ "load" ]
+__all__ = ["load"]
 
 
 def _get_conf_value(name, valid_types=None, default=None):
@@ -40,6 +40,7 @@ def _get_conf_value(name, valid_types=None, default=None):
     # importing here so we can reload each time and catch any updates the user may have made
     try:
         import configuration
+
         reload(configuration)
     except:
         return default
@@ -47,16 +48,27 @@ def _get_conf_value(name, valid_types=None, default=None):
     if hasattr(configuration, name):
         value = getattr(configuration, name)
         if valid_types is None or isinstance(value, valid_types):
-            log.debug("Got '{name}': '{value}' from configuration".format(name=name, value=value))
+            log.debug(
+                "Got '{name}': '{value}' from configuration".format(
+                    name=name, value=value
+                )
+            )
             return value
         else:
-            log.error("Configuration value for '{name}' is type '{type}', must be one of {valid_types}".format(
-                name=name, type=type(value), valid_types=valid_types))
+            log.error(
+                "Configuration value for '{name}' is type '{type}', must be one of {valid_types}".format(
+                    name=name, type=type(value), valid_types=valid_types
+                )
+            )
             return default
     else:
-        log.debug("No value for '{name}' specified in configuration, using default '{value}'".format(
-            name=name, value=default))
+        log.debug(
+            "No value for '{name}' specified in configuration, using default '{value}'".format(
+                name=name, value=default
+            )
+        )
         return default
+
 
 def update_dict(d, u):
     """
@@ -72,6 +84,7 @@ def update_dict(d, u):
             d[k] = u[k]
     return d
 
+
 def load():
     this = sys.modules[__name__]
     this.master_group_name = _get_conf_value(CONF_KEY_MASTER_GROUP, str, "")
@@ -80,6 +93,6 @@ def load():
     this.reinit_item_name = _get_conf_value(CONF_KEY_REINIT_ITEM, str, "")
     this.log_trace = _get_conf_value(CONF_KEY_LOG_TRACE, None, False)
     this.global_settings = update_dict(
-            copy.deepcopy(constants._global_settings),
-            _get_conf_value(CONF_KEY_GLOBAL_SETTINGS, dict, {})
-        )
+        copy.deepcopy(constants._global_settings),
+        _get_conf_value(CONF_KEY_GLOBAL_SETTINGS, dict, {}),
+    )

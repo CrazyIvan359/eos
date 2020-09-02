@@ -2,6 +2,9 @@
 
 ## Development
 
+* **Changed**
+  * Started using Python Black code formatting.
+
 ## 0.2.5
 
 * **Fixed**

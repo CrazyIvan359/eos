@@ -1,0 +1,20 @@
+[tool.black]
+target-version = ['py27']
+exclude = '''
+/(
+      \.github
+    | \.vscode
+    | questionary
+
+    | \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+)/
+'''

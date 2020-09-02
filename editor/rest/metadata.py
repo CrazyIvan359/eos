@@ -1,7 +1,7 @@
 """
 REST Based Metadata Editor - Metadata
 """
-# Copyright (c) 2019 Eos Lighting contributors
+# Copyright (c) 2020 Eos Lighting contributors
 #
 # The Eos Editor includes software from questionary (https://github.com/tmbo/questionary),
 # under the MIT License.

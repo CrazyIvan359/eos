@@ -3,7 +3,7 @@ Eos Lighting
 
 Contants used by all modules
 """
-# Copyright (c) 2019 Eos Lighting contributors
+# Copyright (c) 2020 Eos Lighting contributors
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal

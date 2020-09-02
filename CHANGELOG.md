@@ -5,6 +5,9 @@
 * **Changed**
   * Started using Python Black code formatting.
 
+* **Fixed**
+  * Versions in `requirements.txt` for Editor did not have upper limit.
+
 ## 0.2.5
 
 * **Fixed**

@@ -1,4 +1,4 @@
 prompt_toolkit==2.0.7
-pygments>=2.4.2
-click>=7.0
-requests>=2.22.0
+pygments>=2.4.2,<3.0
+click>=7.0,<8.0
+requests>=2.22.0,<3.0

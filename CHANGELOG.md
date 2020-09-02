@@ -1,5 +1,7 @@
 # Eos Change Log
 
+## Development
+
 ## 0.2.5
 
 * **Fixed**
